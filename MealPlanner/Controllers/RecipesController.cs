@@ -38,6 +38,10 @@ namespace MealPlanner.Controllers
                 return NotFound();
             }
 
+            recipe.LastViewed = DateTime.Now;
+            _context.Update(recipe);
+            await _context.SaveChangesAsync();
+
             return View(recipe);
         }
 
@@ -88,8 +92,7 @@ namespace MealPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["ImageId"] = new SelectList(_context.Images, "Id", "Id", recipe.ImageId);
-            ViewData["RecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Id", recipe.RecipeCategoryId);
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
 
@@ -98,7 +101,7 @@ namespace MealPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,RecipeCategoryId,LastViewed,ImageId")] Recipe recipe)
+        public async Task<IActionResult> Edit(int id, Recipe recipe)
         {
             if (id != recipe.Id)
             {
@@ -125,8 +128,7 @@ namespace MealPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ImageId"] = new SelectList(_context.Images, "Id", "Id", recipe.ImageId);
-            ViewData["RecipeCategoryId"] = new SelectList(_context.RecipeCategories, "Id", "Id", recipe.RecipeCategoryId);
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
 
@@ -155,7 +157,8 @@ namespace MealPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipe = await _context.Recipes.SingleOrDefaultAsync(m => m.Id == id);
+            var recipe = await _context.Recipes.Include(m => m.Image).SingleOrDefaultAsync(m => m.Id == id);
+            _context.Images.Remove(recipe.Image);
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
