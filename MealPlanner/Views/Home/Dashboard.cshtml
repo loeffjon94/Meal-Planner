@@ -1,0 +1,10 @@
+﻿@model MealPlanner.Data.ViewModels.DashboardVM
+
+<h3>Featured Meals</h3>
+@foreach (var meal in Model.FeaturedMeals)
+{
+    <div style="text-align:center;">
+        <img src="data:image;base64,@System.Convert.ToBase64String(meal.Image.Data)" style="max-height: 200px;" />
+        <h4>@meal.Name</h4>
+    </div>
+}
