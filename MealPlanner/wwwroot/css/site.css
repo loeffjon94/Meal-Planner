@@ -33,3 +33,19 @@
         display: none;
     }
 }
+
+.carousel img {
+    width: auto;
+    height: 40vh;
+    max-height: 40vh;
+}
+
+.carousel-inner > .item > img {
+    margin: 0 auto;
+}
+
+.centered {
+    position: fixed;
+    top: 35%;
+    left: 45%;
+}

@@ -4,12 +4,13 @@ using MealPlanner.Models;
 using MealPlanner.Data.Models;
 using System.Threading.Tasks;
 using MealPlanner.Data.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace MealPlanner.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(MealPlannerContext context) : base(context)
+        public HomeController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
         {
         }
 
