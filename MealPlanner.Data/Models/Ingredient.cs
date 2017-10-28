@@ -1,9 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace MealPlanner.Data.Models
 {
     public class Ingredient
     {
+        public Ingredient()
+        {
+            RecipeDetails = new HashSet<RecipeDetail>();
+        }
+
         public int Id { get; set; }
 
         [StringLength(100)]
@@ -16,5 +22,7 @@ namespace MealPlanner.Data.Models
         public virtual IngredientCategory IngredientCategory { get; set; }
 
         public virtual Store Store { get; set; }
+
+        public ICollection<RecipeDetail> RecipeDetails { get; set; }
     }
 }
