@@ -38,6 +38,9 @@ namespace MealPlanner
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            //app.UseDeveloperExceptionPage();
+            //app.UseBrowserLink();
+
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
