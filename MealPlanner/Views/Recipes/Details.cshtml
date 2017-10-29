@@ -4,18 +4,17 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
-
+<h2>@Model.Name</h2>
+@if (Model.Image.Data != null)
+{
+    <img src="data:image;base64,@System.Convert.ToBase64String(Model.Image.Data)" />
+}
+else
+{
+    <img src="@Model.Image.DataUrl" />
+}
 <div>
-    <h4>Recipe</h4>
-    <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.LastViewed)
         </dt>
@@ -23,20 +22,23 @@
             @Html.DisplayFor(model => model.LastViewed)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Image.Id)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.RecipeCategory)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.RecipeCategory.Id)
+            @Html.DisplayFor(model => model.RecipeCategory.Name)
         </dd>
     </dl>
 </div>
+
+@Html.Partial("../RecipeDetails/Index", Model.RecipeDetails)
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<style>
+    img {
+        max-height: 40vh;
+    }
+</style>
