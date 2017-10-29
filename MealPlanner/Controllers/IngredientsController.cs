@@ -17,7 +17,7 @@ namespace MealPlanner.Controllers
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-            var mealPlannerContext = _context.Ingredients.Include(i => i.IngredientCategory).Include(i => i.Store);
+            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).OrderBy(x => x.Name);
             return View(await mealPlannerContext.ToListAsync());
         }
 
@@ -30,7 +30,6 @@ namespace MealPlanner.Controllers
             }
 
             var ingredient = await _context.Ingredients
-                .Include(i => i.IngredientCategory)
                 .Include(i => i.Store)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (ingredient == null)
@@ -44,7 +43,6 @@ namespace MealPlanner.Controllers
         // GET: Ingredients/Create
         public IActionResult Create()
         {
-            ViewData["IngredientCategories"] = new SelectList(_context.IngredientCategories, "Id", "Name");
             ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name");
             return View();
         }
@@ -62,7 +60,6 @@ namespace MealPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IngredientCategories"] = new SelectList(_context.IngredientCategories, "Id", "Name", ingredient.IngredientCategoryId);
             ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
@@ -80,7 +77,6 @@ namespace MealPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["IngredientCategories"] = new SelectList(_context.IngredientCategories, "Id", "Name", ingredient.IngredientCategoryId);
             ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
@@ -117,7 +113,6 @@ namespace MealPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IngredientCategories"] = new SelectList(_context.IngredientCategories, "Id", "Name", ingredient.IngredientCategoryId);
             ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
@@ -131,7 +126,6 @@ namespace MealPlanner.Controllers
             }
 
             var ingredient = await _context.Ingredients
-                .Include(i => i.IngredientCategory)
                 .Include(i => i.Store)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (ingredient == null)

@@ -9,7 +9,6 @@ namespace MealPlanner.Data.Models
         }
 
         public virtual DbSet<MealPlanner.Data.Models.Ingredient> Ingredients { get; set; }
-        public virtual DbSet<MealPlanner.Data.Models.IngredientCategory> IngredientCategories { get; set; }
         public virtual DbSet<MealPlanner.Data.Models.Recipe> Recipes { get; set; }
         public virtual DbSet<MealPlanner.Data.Models.RecipeCategory> RecipeCategories { get; set; }
         public virtual DbSet<MealPlanner.Data.Models.RecipeDetail> RecipeDetails { get; set; }
@@ -23,11 +22,6 @@ namespace MealPlanner.Data.Models
                 .HasMany(p => p.Recipes)
                 .WithOne(p => p.Image)
                 .HasForeignKey(p => p.ImageId);
-
-            modelBuilder.Entity<MealPlanner.Data.Models.IngredientCategory>()
-                .HasMany(p => p.Ingredients)
-                .WithOne(p => p.IngredientCategory)
-                .HasForeignKey(p => p.IngredientCategoryId);
 
             modelBuilder.Entity<MealPlanner.Data.Models.Store>()
                 .HasMany(p => p.Ingredients)

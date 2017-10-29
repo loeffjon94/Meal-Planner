@@ -16,7 +16,7 @@ namespace MealPlanner.Controllers
         // GET: Units
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Units.ToListAsync());
+            return View(await _context.Units.OrderBy(x => x.Name).ToListAsync());
         }
 
         // GET: Units/Details/5
