@@ -1,7 +1,11 @@
-﻿$('.carousel').swipe({
-    swipe: function (event, direction, distance, duration, fingerCount, fingerData) {
-        if (direction == 'left') $(this).carousel('next');
-        if (direction == 'right') $(this).carousel('prev');
-    },
-    allowPageScroll: "vertical"
-})
+﻿$(document).on('pageinit', function (event) {
+    $('.carousel').on('swiperight', function (event) {
+        alert("Right");
+        $(this).carousel('next');
+    });
+
+    $('.carousel').on('swipeleft', function (event) {
+        alert("Left");
+        $(this).carousel('prev');
+    });
+});
