@@ -18,7 +18,7 @@ namespace MealPlanner.Controllers
         // GET: Recipes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipes.Include(r => r.Image).Include(r => r.RecipeCategory).ToListAsync());
+            return View(await _context.Recipes.Include(r => r.Image).Include(r => r.RecipeCategory).OrderBy(x => x.Name).ToListAsync());
         }
 
         // GET: Recipes/Details/5

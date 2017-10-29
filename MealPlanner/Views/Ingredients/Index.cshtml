@@ -12,11 +12,8 @@
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
             <th>
-                @Html.DisplayNameFor(model => model.IngredientCategory)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Store)
@@ -29,9 +26,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IngredientCategory.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Store.Id)

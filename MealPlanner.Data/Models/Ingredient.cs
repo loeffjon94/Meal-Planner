@@ -15,14 +15,8 @@ namespace MealPlanner.Data.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        [Display(Name = "Category")]
-        public int IngredientCategoryId { get; set; }
-
         [Display(Name = "Store")]
         public int StoreId { get; set; }
-
-        [Display(Name = "Category")]
-        public virtual IngredientCategory IngredientCategory { get; set; }
 
         public virtual Store Store { get; set; }
 

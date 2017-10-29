@@ -16,7 +16,7 @@ namespace MealPlanner.Controllers
         // GET: Stores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Stores.ToListAsync());
+            return View(await _context.Stores.OrderBy(x => x.Name).ToListAsync());
         }
 
         // GET: Stores/Details/5
