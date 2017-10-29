@@ -49,3 +49,7 @@
     top: 35%;
     left: 45%;
 }
+
+.table {
+    min-width: 100% !important;
+}

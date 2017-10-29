@@ -1,10 +1,10 @@
-﻿@model IEnumerable<MealPlanner.Data.Models.Recipe>
+﻿@model IEnumerable<MealPlanner.Data.Models.Ingredient>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Recipes</h2>
+<h2>Ingredients</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,11 +12,14 @@
 <table class="table">
     <thead>
         <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.IngredientCategory)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RecipeCategory)
+                @Html.DisplayNameFor(model => model.Store)
             </th>
             <th></th>
         </tr>
@@ -28,7 +31,10 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
+                @Html.DisplayFor(modelItem => item.IngredientCategory.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Store.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
