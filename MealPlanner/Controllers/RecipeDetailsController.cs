@@ -42,13 +42,15 @@ namespace MealPlanner.Controllers
         }
 
         // GET: RecipeDetails/Create
-        public IActionResult Create(int id)
+        public async Task<IActionResult> Create(int recipeId)
         {
             ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name");
             ViewData["Units"] = new SelectList(_context.Units, "Id", "Name");
+            var maxStep = await _context.RecipeDetails.Where(x => x.RecipeId == recipeId).Select(x => x.Step).DefaultIfEmpty(0).MaxAsync();
             RecipeDetail detail = new RecipeDetail()
             {
-                RecipeId = id
+                RecipeId = recipeId,
+                Step = maxStep + 1
             };
             return View(detail);
         }
@@ -153,9 +155,10 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var recipeDetail = await _context.RecipeDetails.SingleOrDefaultAsync(m => m.Id == id);
+            var recipeId = recipeDetail.RecipeId;
             _context.RecipeDetails.Remove(recipeDetail);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Recipes", new { id = recipeId });
         }
 
         private bool RecipeDetailExists(int id)
