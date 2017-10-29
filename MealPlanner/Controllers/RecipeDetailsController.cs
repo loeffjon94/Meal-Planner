@@ -15,10 +15,9 @@ namespace MealPlanner.Controllers
         }
 
         // GET: RecipeDetails
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id)
         {
-            var mealPlannerContext = _context.RecipeDetails.Include(r => r.Ingredient).Include(r => r.Recipe).Include(r => r.Unit);
-            return View(await mealPlannerContext.ToListAsync());
+            return View(await _context.RecipeDetails.Where(x => x.RecipeId == id).Include(r => r.Ingredient).Include(r => r.Recipe).Include(r => r.Unit).ToListAsync());
         }
 
         // GET: RecipeDetails/Details/5
@@ -51,7 +50,7 @@ namespace MealPlanner.Controllers
             {
                 RecipeId = id
             };
-            return View();
+            return View(detail);
         }
 
         // POST: RecipeDetails/Create
