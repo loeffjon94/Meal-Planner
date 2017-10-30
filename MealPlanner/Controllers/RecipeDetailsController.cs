@@ -42,15 +42,13 @@ namespace MealPlanner.Controllers
         }
 
         // GET: RecipeDetails/Create
-        public async Task<IActionResult> Create(int recipeId)
+        public IActionResult Create(int recipeId)
         {
             ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name");
             ViewData["Units"] = new SelectList(_context.Units, "Id", "Name");
-            var maxStep = await _context.RecipeDetails.Where(x => x.RecipeId == recipeId).Select(x => x.Step).DefaultIfEmpty(0).MaxAsync();
             RecipeDetail detail = new RecipeDetail()
             {
-                RecipeId = recipeId,
-                Step = maxStep + 1
+                RecipeId = recipeId
             };
             return View(detail);
         }

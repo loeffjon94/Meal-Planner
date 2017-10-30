@@ -19,6 +19,11 @@ namespace MealPlanner.Data.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MealPlanner.Data.Models.Image>()
+                .HasMany(p => p.RecipeLists)
+                .WithOne(p => p.RecipeImage)
+                .HasForeignKey(p => p.RecipeImageId);
+
+            modelBuilder.Entity<MealPlanner.Data.Models.Image>()
                 .HasMany(p => p.Recipes)
                 .WithOne(p => p.Image)
                 .HasForeignKey(p => p.ImageId);

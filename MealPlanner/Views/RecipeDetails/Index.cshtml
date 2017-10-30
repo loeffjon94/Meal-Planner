@@ -11,16 +11,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Ingredient)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Unit)
             </th>
             <th></th>
         </tr>
@@ -29,16 +23,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Ingredient.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Unit.Name)
+                @Html.DisplayFor(modelItem => item.Quantity) @item.Unit.Name
             </td>
             <td>
                 <a asp-controller="RecipeDetails" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
