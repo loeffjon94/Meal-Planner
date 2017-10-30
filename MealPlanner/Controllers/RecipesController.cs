@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace MealPlanner.Controllers
 {
@@ -32,6 +34,7 @@ namespace MealPlanner.Controllers
 
             var recipe = await _context.Recipes
                 .Include(r => r.Image)
+                .Include(r => r.RecipeImage)
                 .Include(r => r.RecipeCategory)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
@@ -61,7 +64,7 @@ namespace MealPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Recipe recipe)
+        public async Task<IActionResult> Create(Recipe recipe, IFormFile RecipeImage)
         {
             if (ModelState.IsValid)
             {
@@ -74,6 +77,17 @@ namespace MealPlanner.Controllers
                 };
                 image.Recipes.Add(recipe);
 
+                using (var stream = new MemoryStream())
+                {
+                    RecipeImage.CopyTo(stream);
+                    Image recipeImage = new Image()
+                    {
+                        Data = stream.ToArray()
+                    };
+                    recipeImage.RecipeLists.Add(recipe);
+                    _context.Images.Add(recipeImage);
+                }
+                
                 _context.Images.Add(image);
                 _context.Add(recipe);
                 await _context.SaveChangesAsync();
@@ -105,7 +119,7 @@ namespace MealPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Recipe recipe)
+        public async Task<IActionResult> Edit(int id, Recipe recipe, IFormFile RecipeImage)
         {
             if (id != recipe.Id)
             {
@@ -116,6 +130,16 @@ namespace MealPlanner.Controllers
             {
                 try
                 {
+                    using (var stream = new MemoryStream())
+                    {
+                        RecipeImage.CopyTo(stream);
+                        Image recipeImage = new Image()
+                        {
+                            Data = stream.ToArray()
+                        };
+                        recipeImage.RecipeLists.Add(recipe);
+                        _context.Images.Add(recipeImage);
+                    }
                     _context.Update(recipe);
                     await _context.SaveChangesAsync();
                 }

@@ -17,11 +17,6 @@ namespace MealPlanner.Data.Models
         [Display(Name = "Unit")]
         public int? UnitId { get; set; }
 
-        [StringLength(2000)]
-        public string Description { get; set; }
-
-        public int Step { get; set; }
-
         public virtual Recipe Recipe { get; set; }
 
         public virtual Ingredient Ingredient { get; set; }

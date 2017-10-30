@@ -8,6 +8,7 @@ namespace MealPlanner.Data.Models
         public Image()
         {
             Recipes = new HashSet<Recipe>();
+            RecipeLists = new HashSet<Recipe>();
         }
 
         public int Id { get; set; }
@@ -18,5 +19,7 @@ namespace MealPlanner.Data.Models
         public string DataUrl { get; set; }
 
         public ICollection<Recipe> Recipes { get; set; }
+
+        public ICollection<Recipe> RecipeLists { get; set; }
     }
 }

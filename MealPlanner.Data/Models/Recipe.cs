@@ -25,10 +25,14 @@ namespace MealPlanner.Data.Models
         [Display(Name = "Image")]
         public int ImageId { get; set; }
 
+        public int? RecipeImageId { get; set; }
+
         [Display(Name = "Category")]
         public virtual RecipeCategory RecipeCategory { get; set; }
 
         public virtual Image Image { get; set; }
+
+        public virtual Image RecipeImage { get; set; }
 
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
     }
