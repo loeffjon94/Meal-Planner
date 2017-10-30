@@ -55,7 +55,7 @@ namespace MealPlanner.Controllers
         // GET: Recipes/Create
         public IActionResult Create()
         {
-            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name");
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name");
             return View();
         }
 
@@ -93,7 +93,7 @@ namespace MealPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.RecipeCategoryId);
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
 
@@ -110,7 +110,7 @@ namespace MealPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.RecipeCategoryId);
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
 
@@ -156,7 +156,7 @@ namespace MealPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories, "Id", "Name", recipe.RecipeCategoryId);
+            ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
 
