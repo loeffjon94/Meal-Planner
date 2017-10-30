@@ -43,7 +43,7 @@ namespace MealPlanner.Controllers
         // GET: Ingredients/Create
         public IActionResult Create()
         {
-            ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name");
+            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name");
             return View();
         }
 
@@ -60,7 +60,7 @@ namespace MealPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
+            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
 
@@ -77,7 +77,7 @@ namespace MealPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
+            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
 
@@ -113,7 +113,7 @@ namespace MealPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Stores"] = new SelectList(_context.Stores, "Id", "Name", ingredient.StoreId);
+            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
 

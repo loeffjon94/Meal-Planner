@@ -44,8 +44,8 @@ namespace MealPlanner.Controllers
         // GET: RecipeDetails/Create
         public IActionResult Create(int recipeId)
         {
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name");
-            ViewData["Units"] = new SelectList(_context.Units, "Id", "Name");
+            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name");
+            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name");
             RecipeDetail detail = new RecipeDetail()
             {
                 RecipeId = recipeId
@@ -66,8 +66,8 @@ namespace MealPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Recipes", new { id = recipeDetail.RecipeId });
             }
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units, "Id", "Name", recipeDetail.UnitId);
+            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
+            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
             return View(recipeDetail);
         }
 
@@ -84,8 +84,8 @@ namespace MealPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units, "Id", "Name", recipeDetail.UnitId);
+            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
+            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
             return View(recipeDetail);
         }
 
@@ -121,8 +121,8 @@ namespace MealPlanner.Controllers
                 }
                 return RedirectToAction("Details", "Recipes", new { id = recipeDetail.RecipeId });
             }
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients, "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units, "Id", "Name", recipeDetail.UnitId);
+            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
+            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
             return View(recipeDetail);
         }
 

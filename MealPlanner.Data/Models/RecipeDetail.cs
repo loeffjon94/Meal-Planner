@@ -11,8 +11,9 @@ namespace MealPlanner.Data.Models
 
         [Display(Name = "Ingredient")]
         public int? IngredientId { get; set; }
-
-        public decimal Quantity { get; set; }
+        
+        [Required]
+        public decimal? Quantity { get; set; }
 
         [Display(Name = "Unit")]
         public int? UnitId { get; set; }
