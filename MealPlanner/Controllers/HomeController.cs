@@ -5,6 +5,10 @@ using MealPlanner.Data.Models;
 using System.Threading.Tasks;
 using MealPlanner.Data.ViewModels;
 using Microsoft.Extensions.Configuration;
+using System;
+using MealPlanner.Data.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace MealPlanner.Controllers
 {
@@ -23,9 +27,45 @@ namespace MealPlanner.Controllers
         {
             DashboardVM vm = new DashboardVM()
             {
-                FeaturedMeals = await _mealsRepo.GetFeaturedMeals()
+                ThisWeekStartDate = DateTime.Now.StartOfWeek(DayOfWeek.Monday),
+                NextWeekStartDate = DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday),
+                FeaturedMeals = await _mealsRepo.GetFeaturedMeals(),
+                ThisWeekTitle = DateTime.Now.StartOfWeek(DayOfWeek.Monday).ToShortDateString() + " - " + DateTime.Now.StartOfWeek(DayOfWeek.Monday).AddDays(6).ToShortDateString(),
+                NextWeekTitle = DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday).ToShortDateString() + " - " + DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday).AddDays(6).ToShortDateString(),
+                ThisWeekMeals = await _mealsRepo.GetThisWeeksMeals(),
+                NextWeekMeals = await _mealsRepo.GetNextWeeksMeals()
             };
             return PartialView(vm);
+        }
+
+        public IActionResult SelectMealPartial(DateTime date)
+        {
+            var plan = _context.MealPlans.Where(x => x.Date == date).FirstOrDefault();
+            if (plan == null)
+            {
+                plan = new MealPlan()
+                {
+                    Date = date
+                };
+            }
+            ViewData["Recipes"] = new SelectList(_context.Recipes.OrderBy(x => x.Name), "Id", "Name");
+            return PartialView(plan);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SelectMealPartial(MealPlan plan)
+        {
+            await _mealsRepo.UpdateRecipe(plan.RecipeId);
+            if (plan.Id > 0)
+            {
+                _context.Update(plan);
+            }
+            else
+            {
+                _context.MealPlans.Add(plan);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Error()
