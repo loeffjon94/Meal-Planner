@@ -17,7 +17,7 @@ namespace MealPlanner.Controllers
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).OrderBy(x => x.Name);
+            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).Include(i => i.RecipeDetails).OrderBy(x => x.Name);
             return View(await mealPlannerContext.ToListAsync());
         }
 

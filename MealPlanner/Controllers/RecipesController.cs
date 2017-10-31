@@ -188,8 +188,15 @@ namespace MealPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipe = await _context.Recipes.Include(m => m.Image).SingleOrDefaultAsync(m => m.Id == id);
+            var recipe = await _context.Recipes
+                .Include(m => m.Image)
+                .Include(m => m.RecipeImage)
+                .SingleOrDefaultAsync(m => m.Id == id);
             _context.Images.Remove(recipe.Image);
+            if (recipe.RecipeImage != null)
+            {
+                _context.Images.Remove(recipe.RecipeImage);
+            }
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

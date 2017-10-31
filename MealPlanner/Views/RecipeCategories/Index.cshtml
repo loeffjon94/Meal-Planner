@@ -4,11 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Recipe Categories</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="row">
+    <div class="col-sm-11">
+        <h2>Recipe Categories</h2>
+    </div>
+    <div class="col-sm-1">
+        <p style="margin-top: 21px;">
+            <a asp-action="Create" class="btn btn-sm btn-success">Create <i class="glyphicon glyphicon-plus-sign"></i></a>
+        </p>
+    </div>
+</div>
+<hr />
 <table class="table">
     <thead>
         <tr>
@@ -25,8 +31,17 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <div class="btn-group" style="min-width: 69px; float:right;">
+                    @if (item.Recipes.Count() == 0)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                    }
+                    else
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger disabled"><i class="glyphicon glyphicon-remove"></i></a>
+                    }
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
+                </div>
             </td>
         </tr>
 }

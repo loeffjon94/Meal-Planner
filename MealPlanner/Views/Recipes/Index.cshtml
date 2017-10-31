@@ -1,21 +1,17 @@
 ﻿@model IEnumerable<MealPlanner.Data.Models.Recipe>
 
-@{
-    ViewData["Title"] = "Index";
-}
-
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-11">
         <h2>Recipes</h2>
     </div>
-    <div class="col-sm-6">
-        <p style="float:right; margin-top: 21px;">
+    <div class="col-sm-1">
+        <p style="margin-top: 21px;">
             <a asp-action="Create" class="btn btn-sm btn-success">Create <i class="glyphicon glyphicon-plus-sign"></i></a>
         </p>
     </div>
 </div>
 <hr />
-<table class="table">
+<table class="table" style="width: 100%;">
     <thead>
         <tr>
             <th>
@@ -37,10 +33,10 @@
                 @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
             </td>
             <td>
-                <div class="btn-group">
+                <div class="btn-group" style="min-width: 103px; float:right;">
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-info-sign"></i></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                 </div>
             </td>
         </tr>
