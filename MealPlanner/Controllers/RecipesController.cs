@@ -202,6 +202,15 @@ namespace MealPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> DownloadRecipe(int id)
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.RecipeImage)
+                .SingleOrDefaultAsync(r => r.Id == id);
+
+            return File(recipe.RecipeImage.Data, "image/png", recipe.Name + ".png");
+        }
+
         private bool RecipeExists(int id)
         {
             return _context.Recipes.Any(e => e.Id == id);

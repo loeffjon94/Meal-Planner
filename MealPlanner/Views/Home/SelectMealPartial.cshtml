@@ -1,0 +1,33 @@
+﻿@model MealPlanner.Data.Models.MealPlan
+
+<div class="modal fade in" id="selectMealModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #2c3e50;">
+                <button type="button" class="close" onclick="closeSelectMealModal()" style="color: white;"><i>&times;</i></button>
+                <h3 class="modal-title" style="color: white;">Select Meal</h3>
+            </div>
+            <form asp-action="SelectMealPartial">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Date" />
+                    <div class="form-group">
+                        <label asp-for="RecipeId" class="control-label"></label>
+                        <select asp-for="RecipeId" class="form-control" asp-items="ViewBag.Recipes"><option>Select a Meal</option></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" onclick="closeSelectMealModal()">Close</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeSelectMealModal() {
+        $('#selectMealModal').modal('hide');
+    }
+</script>

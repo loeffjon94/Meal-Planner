@@ -15,9 +15,15 @@ namespace MealPlanner.Data.Models
         public virtual DbSet<MealPlanner.Data.Models.Store> Stores { get; set; }
         public virtual DbSet<MealPlanner.Data.Models.Unit> Units { get; set; }
         public virtual DbSet<MealPlanner.Data.Models.Image> Images { get; set; }
+        public virtual DbSet<MealPlanner.Data.Models.MealPlan> MealPlans { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<MealPlanner.Data.Models.Recipe>()
+                .HasMany(p => p.MealPlans)
+                .WithOne(p => p.Recipe)
+                .HasForeignKey(p => p.RecipeId);
+
             modelBuilder.Entity<MealPlanner.Data.Models.Image>()
                 .HasMany(p => p.RecipeLists)
                 .WithOne(p => p.RecipeImage)

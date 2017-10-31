@@ -9,6 +9,7 @@ namespace MealPlanner.Data.Models
         public Recipe()
         {
             RecipeDetails = new HashSet<RecipeDetail>();
+            MealPlans = new HashSet<MealPlan>();
         }
 
         public int Id { get; set; }
@@ -35,5 +36,7 @@ namespace MealPlanner.Data.Models
         public virtual Image RecipeImage { get; set; }
 
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
+
+        public ICollection<MealPlan> MealPlans { get; set; }
     }
 }
