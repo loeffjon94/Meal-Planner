@@ -77,15 +77,18 @@ namespace MealPlanner.Controllers
                 };
                 image.Recipes.Add(recipe);
 
-                using (var stream = new MemoryStream())
+                if (RecipeImage != null)
                 {
-                    RecipeImage.CopyTo(stream);
-                    Image recipeImage = new Image()
+                    using (var stream = new MemoryStream())
                     {
-                        Data = stream.ToArray()
-                    };
-                    recipeImage.RecipeLists.Add(recipe);
-                    _context.Images.Add(recipeImage);
+                        RecipeImage.CopyTo(stream);
+                        Image recipeImage = new Image()
+                        {
+                            Data = stream.ToArray()
+                        };
+                        recipeImage.RecipeLists.Add(recipe);
+                        _context.Images.Add(recipeImage);
+                    }
                 }
                 
                 _context.Images.Add(image);
