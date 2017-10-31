@@ -16,7 +16,11 @@ namespace MealPlanner.Controllers
         // GET: Stores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Stores.OrderBy(x => x.Name).ToListAsync());
+            return View(await _context.Stores
+                .Include(x => x.Ingredients)
+                .OrderBy(x => x.Name)
+                .ToListAsync()
+            );
         }
 
         // GET: Stores/Details/5
