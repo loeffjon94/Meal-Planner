@@ -27,16 +27,17 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
             </td>
             <td>
-                <div class="btn-group" style="min-width: 103px; float:right;">
+                <div class="btn-group" style="min-width: 69px; float:right;">
                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info"><i class="glyphicon glyphicon-info-sign"></i></a>
                 </div>
             </td>
         </tr>

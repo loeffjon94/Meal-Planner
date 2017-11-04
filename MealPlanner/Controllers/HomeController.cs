@@ -55,14 +55,22 @@ namespace MealPlanner.Controllers
         [HttpPost]
         public async Task<IActionResult> SelectMealPartial(MealPlan plan)
         {
-            await _mealsRepo.UpdateRecipe(plan.RecipeId);
-            if (plan.Id > 0)
+            if (plan.RecipeId == 0)
             {
-                _context.Update(plan);
+                var p = await _context.MealPlans.FindAsync(plan.Id);
+                _context.MealPlans.Remove(p);
             }
             else
             {
-                _context.MealPlans.Add(plan);
+                await _mealsRepo.UpdateRecipe(plan.RecipeId);
+                if (plan.Id > 0)
+                {
+                    _context.Update(plan);
+                }
+                else
+                {
+                    _context.MealPlans.Add(plan);
+                }
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -34,7 +34,6 @@ namespace MealPlanner.Controllers
 
             var recipe = await _context.Recipes
                 .Include(r => r.Image)
-                .Include(r => r.RecipeImage)
                 .Include(r => r.RecipeCategory)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
