@@ -1,5 +1,6 @@
 ﻿using MealPlanner.Data.Extensions;
 using MealPlanner.Data.Models;
+using MealPlanner.Data.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,20 @@ namespace MealPlanner.Data.Repos
                 .ToListAsync();
         }
 
+        public async Task<List<MealPlan>> GetTwoWeeksOfMealsWithIngredients()
+        {
+            var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            return await _context.MealPlans
+                .AsNoTracking()
+                .Include(x => x.Recipe).ThenInclude(y => y.Image)
+                .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
+                .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
+                .Where(x =>
+                    x.Date >= beginningOfWeek &&
+                    x.Date <= beginningOfWeek.AddDays(13))
+                .ToListAsync();
+        }
+
         public async Task UpdateRecipe(int recipeId)
         {
             var recipe = await _context.Recipes.SingleOrDefaultAsync(r => r.Id == recipeId);
@@ -58,6 +73,41 @@ namespace MealPlanner.Data.Repos
             _context.Update(recipe);
             await _context.SaveChangesAsync();
         }
+
+        public List<RecipeDetail> GetUniqueIngredients(List<MealPlan> meals)
+        {
+            return meals.SelectMany(x => x.Recipe.RecipeDetails).OrderBy(x => x.Ingredient.Name).ToList();
+            //var details = new List<RecipeDetail>();
+            //foreach (var meal in meals)
+            //{
+            //    details.AddRange(meal.Recipe.RecipeDetails);
+            //}
+
+            //var shoppingItems = new List<ShoppingItemVM>();
+            //foreach (var detailGroup in details.GroupBy(x => x.IngredientId))
+            //{
+            //    shoppingItems.AddRange(GetShoppingItemsForGroup(detailGroup));
+            //}
+            //return shoppingItems;
+        }
+
+        //private List<ShoppingItemVM> GetShoppingItemsForGroup(IGrouping<int?, RecipeDetail> detailGroup)
+        //{
+        //    List<ShoppingItemVM> shoppingItems = new List<ShoppingItemVM>();
+        //    var detail = detailGroup.FirstOrDefault();
+            
+        //    var unitId = detailGroup.FirstOrDefault().UnitId;
+        //    if (detailGroup.All(x => x.UnitId == unitId))
+        //    {
+        //        shoppingItems.Add(new ShoppingItemVM(detail.Ingredient)
+        //        {
+        //            Quantity = detailGroup.FirstOrDefault().Quantity.Value,
+        //            Unit = detailGroup.FirstOrDefault().Unit.Name
+        //        });
+        //    }
+
+        //    return shoppingItems;
+        //}
 
         //public void CreateImage()
         //{

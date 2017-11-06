@@ -13,9 +13,11 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> NewShoppingList()
         {
-            var meals = await _mealsRepo.GetThisWeeksMeals();
-            meals.AddRange(await _mealsRepo.GetNextWeeksMeals());
-            return View();
+            var meals = await _mealsRepo.GetTwoWeeksOfMealsWithIngredients();
+
+            var details = _mealsRepo.GetUniqueIngredients(meals);
+
+            return View(details);
         }
     }
 }
