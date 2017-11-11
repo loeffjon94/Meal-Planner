@@ -19,6 +19,19 @@ namespace MealPlanner.Data.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SideRelationships>()
+                .HasKey(s => new { s.RecipeId, s.MealPlanId });
+
+            modelBuilder.Entity<MealPlanner.Data.Models.MealPlan>()
+                .HasMany(p => p.SideRecipes)
+                .WithOne(p => p.MealPlan)
+                .HasForeignKey(p => p.MealPlanId);
+
+            modelBuilder.Entity<MealPlanner.Data.Models.Recipe>()
+                .HasMany(p => p.SidePlans)
+                .WithOne(p => p.Recipe)
+                .HasForeignKey(p => p.RecipeId);
+
             modelBuilder.Entity<MealPlanner.Data.Models.Recipe>()
                 .HasMany(p => p.MealPlans)
                 .WithOne(p => p.Recipe)
