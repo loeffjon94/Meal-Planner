@@ -33,6 +33,7 @@ namespace MealPlanner.Data.Repos
             return await _context.MealPlans
                 .AsNoTracking()
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
+                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
                 .ToListAsync();
         }
 

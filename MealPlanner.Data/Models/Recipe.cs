@@ -10,6 +10,7 @@ namespace MealPlanner.Data.Models
         {
             RecipeDetails = new HashSet<RecipeDetail>();
             MealPlans = new HashSet<MealPlan>();
+            SidePlans = new HashSet<SideRelationships>();
         }
 
         public int Id { get; set; }
@@ -38,5 +39,7 @@ namespace MealPlanner.Data.Models
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
 
         public ICollection<MealPlan> MealPlans { get; set; }
+
+        public ICollection<SideRelationships> SidePlans { get; set; }
     }
 }

@@ -1,20 +1,33 @@
 ﻿@model MealPlanner.Data.ViewModels.DashboardVM
 
 <div class="row">
+    <div class="col-xs-8 col-sm-11">
+        <h3 style="margin-top: 5px;">Meal Plan</h3>
+    </div>
+    <div class="col-xs-4 col-sm-1">
+        <a asp-action="ClearMealPlans" class="btn btn-sm btn-danger" onclick="return confirm('Clear all meal plans?');" style="float: right;">Clear All</a>
+    </div>
+</div>
+<div class="row">
     @foreach (var meal in Model.MealPlans)
     {
+        var recipeName = meal.Recipe.Name;
+        foreach (var side in meal.SideRecipes)
+        {
+            recipeName += ", " + side.Recipe.Name;
+        }
         <div class="col-xs-6 col-sm-4 col-md-3">
             <a href="#stay" class="thumbnail" onclick="showSelectMealModal('@meal.Id')">
                 @if (meal.Recipe.Image.Data != null)
                 {
                     <div class="frontpage_square" style="background-image: url(data:image;base64,@System.Convert.ToBase64String(meal.Recipe.Image.Data));">
-                        <h4 class="mealTitle">@meal.Recipe.Name</h4>
+                        <h4 class="mealTitle">@recipeName</h4>
                     </div>
                 }
                 else
                 {
                     <div class="frontpage_square" style="background-image: url(@meal.Recipe.Image.DataUrl);">
-                        <h4 class="mealTitle">@meal.Recipe.Name</h4>
+                        <h4 class="mealTitle">@recipeName</h4>
                     </div>
                 }
             </a>

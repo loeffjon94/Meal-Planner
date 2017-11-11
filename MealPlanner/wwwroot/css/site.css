@@ -66,6 +66,7 @@
     padding-bottom: 100%;
     background-size: cover;
     background-repeat: no-repeat;
+    border-radius: 4px;
 }
 
     .frontpage_square h1 {
@@ -74,8 +75,8 @@
     }
 
 .mealTitle {
-    color: white; 
-    background-color: rgba(0, 0, 0, .5);
+    color: black; 
+    background-color: rgba(255, 255, 255, .60);
     padding: 10px;
     position: absolute;
     bottom: 10px;
