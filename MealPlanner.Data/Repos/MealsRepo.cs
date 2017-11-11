@@ -1,9 +1,10 @@
-﻿using MealPlanner.Data.Extensions;
+﻿using Dapper;
+using MealPlanner.Data.Extensions;
 using MealPlanner.Data.Models;
-using MealPlanner.Data.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,10 +13,12 @@ namespace MealPlanner.Data.Repos
     public class MealsRepo
     {
         private MealPlannerContext _context;
+        private string _connectionString;
 
-        public MealsRepo(MealPlannerContext context)
+        public MealsRepo(MealPlannerContext context, string connectionString)
         {
             _context = context;
+            _connectionString = connectionString;
         }
 
         public async Task<List<Recipe>> GetFeaturedMeals()
@@ -55,6 +58,40 @@ namespace MealPlanner.Data.Repos
             var recipe = await _context.Recipes.SingleOrDefaultAsync(r => r.Id == recipeId);
             recipe.LastViewed = DateTime.Now;
             _context.Update(recipe);
+            await _context.SaveChangesAsync();
+        }
+
+        public void AddMealPlan(MealPlan plan)
+        {
+            var sides = plan.SideRecipes.ToArray();
+            for (int i = 0; i < sides.Length; i++)
+            {
+                if (sides[i].RecipeId == 0)
+                {
+                    plan.SideRecipes.Remove(sides[i]);
+                }
+            }
+
+            _context.MealPlans.Add(plan);
+        }
+
+        public async Task UpdateMealPlan(MealPlan plan)
+        {
+            using(var conn = new SqlConnection(_connectionString))
+            {
+                conn.Execute("DELETE FROM SideRelationships WHERE MealPlanId = @mealPlanId", new { mealPlanId = plan.Id });
+            }
+
+            var sides = plan.SideRecipes.ToArray();
+            for (int i = 0; i < sides.Length; i++)
+            {
+                if (sides[i].RecipeId == 0)
+                {
+                    plan.SideRecipes.Remove(sides[i]);
+                }
+            }
+
+            _context.Update(plan);
             await _context.SaveChangesAsync();
         }
 
