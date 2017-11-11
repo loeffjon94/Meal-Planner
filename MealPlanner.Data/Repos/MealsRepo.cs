@@ -45,6 +45,8 @@ namespace MealPlanner.Data.Repos
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
+                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Ingredient)
+                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Unit)
                 .ToListAsync();
         }
 
@@ -58,7 +60,9 @@ namespace MealPlanner.Data.Repos
 
         public List<RecipeDetail> GetUniqueIngredients(List<MealPlan> meals)
         {
-            return meals.SelectMany(x => x.Recipe.RecipeDetails).OrderBy(x => x.Ingredient.Name).ToList();
+            var mealItems = meals.SelectMany(x => x.Recipe.RecipeDetails).ToList();
+            mealItems.AddRange(meals.SelectMany(x => x.SideRecipes.SelectMany(y => y.Recipe.RecipeDetails)));
+            return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
             //var details = new List<RecipeDetail>();
             //foreach (var meal in meals)
             //{
