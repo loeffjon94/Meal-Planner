@@ -28,31 +28,15 @@ namespace MealPlanner.Data.Repos
                 .ToListAsync();
         }
 
-        public async Task<List<MealPlan>> GetThisWeeksMeals()
+        public async Task<List<MealPlan>> GetMealPlans()
         {
-            var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
             return await _context.MealPlans
                 .AsNoTracking()
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
-                .Where(x => 
-                    x.Date >= beginningOfWeek && 
-                    x.Date <= beginningOfWeek.AddDays(6))
                 .ToListAsync();
         }
 
-        public async Task<List<MealPlan>> GetNextWeeksMeals()
-        {
-            var beginningOfWeek = DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday);
-            return await _context.MealPlans
-                .AsNoTracking()
-                .Include(x => x.Recipe).ThenInclude(y => y.Image)
-                .Where(x => 
-                    x.Date >= beginningOfWeek && 
-                    x.Date <= beginningOfWeek.AddDays(6))
-                .ToListAsync();
-        }
-
-        public async Task<List<MealPlan>> GetTwoWeeksOfMealsWithIngredients()
+        public async Task<List<MealPlan>> GetMealsWithIngredients()
         {
             var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
             return await _context.MealPlans
@@ -60,9 +44,6 @@ namespace MealPlanner.Data.Repos
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
-                .Where(x =>
-                    x.Date >= beginningOfWeek &&
-                    x.Date <= beginningOfWeek.AddDays(13))
                 .ToListAsync();
         }
 

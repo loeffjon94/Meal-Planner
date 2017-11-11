@@ -27,26 +27,18 @@ namespace MealPlanner.Controllers
         {
             DashboardVM vm = new DashboardVM()
             {
-                ThisWeekStartDate = DateTime.Now.StartOfWeek(DayOfWeek.Monday),
-                NextWeekStartDate = DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday),
                 FeaturedMeals = await _mealsRepo.GetFeaturedMeals(),
-                ThisWeekTitle = DateTime.Now.StartOfWeek(DayOfWeek.Monday).ToShortDateString() + " - " + DateTime.Now.StartOfWeek(DayOfWeek.Monday).AddDays(6).ToShortDateString(),
-                NextWeekTitle = DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday).ToShortDateString() + " - " + DateTime.Now.AddDays(7).StartOfWeek(DayOfWeek.Monday).AddDays(6).ToShortDateString(),
-                ThisWeekMeals = await _mealsRepo.GetThisWeeksMeals(),
-                NextWeekMeals = await _mealsRepo.GetNextWeeksMeals()
+                MealPlans = await _mealsRepo.GetMealPlans()
             };
             return PartialView(vm);
         }
 
-        public IActionResult SelectMealPartial(DateTime date)
+        public IActionResult SelectMealPartial(int? id)
         {
-            var plan = _context.MealPlans.Where(x => x.Date == date).FirstOrDefault();
+            var plan = _context.MealPlans.Where(x => x.Id == id).FirstOrDefault();
             if (plan == null)
             {
-                plan = new MealPlan()
-                {
-                    Date = date
-                };
+                plan = new MealPlan();
             }
             ViewData["Recipes"] = new SelectList(_context.Recipes.OrderBy(x => x.Name), "Id", "Name");
             return PartialView(plan);
