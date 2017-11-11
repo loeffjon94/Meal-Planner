@@ -21,7 +21,20 @@
                         {
                             <div class="form-group">
                                 <label class="control-label">Side @(count + 1)</label>
-                                <select id="SideRecipes[@(count)].RecipeId" name="SideRecipes[@(count)].RecipeId" class="form-control" asp-items="ViewBag.Recipes"><option>Select a Side</option></select>
+                                <select id="SideRecipes[@(count)].RecipeId" name="SideRecipes[@(count)].RecipeId" class="form-control">
+                                    <option>Select a Side</option>
+                                    @foreach (var recipe in ViewBag.Recipes as SelectList)
+                                    {
+                                        if (int.Parse(recipe.Value) == side.RecipeId)
+                                        {
+                                            <option value="@recipe.Value" selected="selected">@recipe.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@recipe.Value">@recipe.Text</option>
+                                        }
+                                    }
+                                </select>
                             </div>
                             count++;
                         }
