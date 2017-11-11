@@ -15,7 +15,7 @@ namespace MealPlanner.Controllers
         {
             _configuration = configuration;
             _context = context;
-            _mealsRepo = new MealsRepo(context);
+            _mealsRepo = new MealsRepo(context, configuration.GetConnectionString("MealPlannerContext"));
         }
     }
 }

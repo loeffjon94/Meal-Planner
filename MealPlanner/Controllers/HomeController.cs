@@ -77,11 +77,11 @@ namespace MealPlanner.Controllers
                 await _mealsRepo.UpdateRecipe(plan.RecipeId);
                 if (plan.Id > 0)
                 {
-                    _context.Update(plan);
+                    await _mealsRepo.UpdateMealPlan(plan);
                 }
                 else
                 {
-                    _context.MealPlans.Add(plan);
+                    _mealsRepo.AddMealPlan(plan);
                 }
             }
             try
