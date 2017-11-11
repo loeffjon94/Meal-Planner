@@ -41,18 +41,19 @@
 </style>
 
 <script>
-    var lastRemove;
+    var removed = [];
 
     function removeItem(id) {
-        lastRemove = id;
+        removed.push(id);
         $('#row' + id).children('td').children('div').slideUp(200);
         $('#undoBtn').slideDown(200);
     }
 
     function undoRemove() {
-        $('#row' + lastRemove).children('td').children('div').slideDown(200);
-        lastRemove = null;
-        $('#undoBtn').slideUp(200);
+        $('#row' + removed.pop()).children('td').children('div').slideDown(200);
+        if (removed.length == 0) {
+            $('#undoBtn').slideUp(200);
+        }
     }
 
     $('tr').on('click', function () {

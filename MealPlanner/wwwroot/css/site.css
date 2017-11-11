@@ -53,3 +53,30 @@
 .table {
     min-width: 100% !important;
 }
+
+.wideBtn {
+    width: 100%;
+}
+
+/*Square grid*/
+
+.frontpage_square {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+    .frontpage_square h1 {
+        position: absolute;
+        text-align:center;
+    }
+
+.mealTitle {
+    color: white; 
+    background-color: rgba(0, 0, 0, .5);
+    padding: 10px;
+    position: absolute;
+    bottom: 10px;
+}

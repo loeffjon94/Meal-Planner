@@ -1,61 +1,17 @@
 ﻿@model MealPlanner.Data.ViewModels.DashboardVM
 
-@Html.Partial("FeaturedMeals", Model)
+@*@Html.Partial("FeaturedMeals", Model)*@
 
-@Html.Partial("CurrentWeekMeals", Model)
-
-@Html.Partial("NextWeekMeals", Model)
+@Html.Partial("MealPlans", Model)
 
 <div id="modalDiv"></div>
 
 <script>
-    function showSelectMealModal(date) {
-        date = encodeURIComponent(date);
+    function showSelectMealModal(id) {
         $('#loading').show();
-        $('#modalDiv').load('../Home/SelectMealPartial?date=' + date, function () {
+        $('#modalDiv').load('../Home/SelectMealPartial?id=' + id, function () {
             $('#selectMealModal').modal('show');
             $('#loading').hide();
         });
     }
 </script>
-
-<style>
-    div.horizontal {
-        width: 100%;
-        height: 200px;
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-
-    .table {
-        display:table;
-        table-layout: fixed;
-        width: 100%;
-    }
-
-    article {
-        width: 200px;
-        height: 200px;
-        display: table-cell;
-        vertical-align: central;
-        border: solid 1px #ecf0f1;
-        position:relative;
-    }
-
-    .smallImage {
-        max-width: 100%;
-        max-height: 10vh;
-    }
-
-    .wideBtn {
-        width: 100%;
-    }
-
-    .calendar-contents {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 100%;
-        text-align: center;
-    }
-</style>

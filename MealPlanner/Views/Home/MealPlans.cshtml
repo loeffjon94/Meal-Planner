@@ -1,0 +1,32 @@
+﻿@model MealPlanner.Data.ViewModels.DashboardVM
+
+<div class="row">
+    @foreach (var meal in Model.MealPlans)
+    {
+        <div class="col-xs-6 col-sm-4 col-md-3">
+            <a href="#stay" class="thumbnail" onclick="showSelectMealModal('@meal.Id')">
+                @if (meal.Recipe.Image.Data != null)
+                {
+                    <div class="frontpage_square" style="background-image: url(data:image;base64,@System.Convert.ToBase64String(meal.Recipe.Image.Data));">
+                        <h4 class="mealTitle">@meal.Recipe.Name</h4>
+                    </div>
+                }
+                else
+                {
+                    <div class="frontpage_square" style="background-image: url(@meal.Recipe.Image.DataUrl);">
+                        <h4 class="mealTitle">@meal.Recipe.Name</h4>
+                    </div>
+                }
+            </a>
+        </div>
+    }
+    <div class="col-xs-6 col-sm-4 col-md-3">
+        <a href="#stay" class="thumbnail" onclick="showSelectMealModal('null')">
+            <div class="frontpage_square">
+                <h1><span style="font-size: 100px;"><i class="glyphicon glyphicon-plus"></i></span><br /><span style="font-size: 30px;">Add a new Meal</span></h1>
+            </div>
+        </a>
+
+    </div>
+
+</div>
