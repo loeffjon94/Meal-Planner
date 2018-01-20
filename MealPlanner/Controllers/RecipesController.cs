@@ -93,7 +93,7 @@ namespace MealPlanner.Controllers
                 _context.Images.Add(image);
                 _context.Add(recipe);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = recipe.Id });
             }
             ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);

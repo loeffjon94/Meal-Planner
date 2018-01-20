@@ -69,14 +69,19 @@
     border-radius: 4px;
 }
 
-    .frontpage_square h1 {
-        position: absolute;
-        text-align:center;
-    }
+.frontpage_square_container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    text-align:center;
+    width: 100%;
+}
+        
 
 .mealTitle {
     color: black; 
-    background-color: rgba(255, 255, 255, .60);
+    background-color: rgba(255, 255, 255, .7);
     padding: 10px;
     position: absolute;
     bottom: 10px;
