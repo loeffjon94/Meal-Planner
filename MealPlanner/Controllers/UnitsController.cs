@@ -23,16 +23,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var unit = await _context.Units
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (unit == null)
-            {
                 return NotFound();
-            }
 
             return View(unit);
         }
@@ -63,15 +60,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var unit = await _context.Units.SingleOrDefaultAsync(m => m.Id == id);
+
             if (unit == null)
-            {
                 return NotFound();
-            }
+
             return View(unit);
         }
 
@@ -83,9 +78,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Unit unit)
         {
             if (id != unit.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -97,13 +90,9 @@ namespace MealPlanner.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UnitExists(unit.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -114,16 +103,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var unit = await _context.Units
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (unit == null)
-            {
                 return NotFound();
-            }
 
             return View(unit);
         }

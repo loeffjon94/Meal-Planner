@@ -5,13 +5,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
+using MealPlanner.Data.Repos;
 
 namespace MealPlanner.Controllers
 {
     public class IngredientsController : BaseController
     {
+        private IngredientRepo _ingredientRepo;
+
         public IngredientsController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
         {
+            _ingredientRepo = new IngredientRepo(context);
         }
 
         // GET: Ingredients
@@ -25,17 +29,12 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var ingredient = await _context.Ingredients
-                .Include(i => i.Store)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var ingredient = await _ingredientRepo.GetIngredient(id);
+
             if (ingredient == null)
-            {
                 return NotFound();
-            }
 
             return View(ingredient);
         }
@@ -56,8 +55,7 @@ namespace MealPlanner.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ingredient);
-                await _context.SaveChangesAsync();
+                await _ingredientRepo.CreateIngredient(ingredient);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
@@ -72,11 +70,11 @@ namespace MealPlanner.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredients.SingleOrDefaultAsync(m => m.Id == id);
+            var ingredient = await _ingredientRepo.GetIngredient(id);
+
             if (ingredient == null)
-            {
                 return NotFound();
-            }
+
             ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
             return View(ingredient);
         }
@@ -89,27 +87,20 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int id, Ingredient ingredient)
         {
             if (id != ingredient.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(ingredient);
-                    await _context.SaveChangesAsync();
+                    await _ingredientRepo.UpdateIngredient(ingredient);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!IngredientExists(ingredient.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -121,17 +112,12 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var ingredient = await _context.Ingredients
-                .Include(i => i.Store)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var ingredient = await _ingredientRepo.GetIngredient(id);
+
             if (ingredient == null)
-            {
                 return NotFound();
-            }
 
             return View(ingredient);
         }
@@ -141,9 +127,7 @@ namespace MealPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ingredient = await _context.Ingredients.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Ingredients.Remove(ingredient);
-            await _context.SaveChangesAsync();
+            await _ingredientRepo.DeleteIngredient(id);
             return RedirectToAction(nameof(Index));
         }
 

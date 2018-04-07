@@ -28,21 +28,11 @@ namespace MealPlanner.Controllers
         {
             ViewBag.RecipeId = id;
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.Image)
-                .Include(r => r.RecipeCategory)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Recipe)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var recipe = await _mealsRepo.GetFullMeal(id);
             if (recipe == null)
-            {
                 return NotFound();
-            }
 
             recipe.LastViewed = DateTime.Now;
             _context.Update(recipe);
@@ -103,15 +93,12 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var recipe = await _context.Recipes.SingleOrDefaultAsync(m => m.Id == id);
             if (recipe == null)
-            {
                 return NotFound();
-            }
+
             ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
         }
@@ -124,9 +111,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int id, Recipe recipe, IFormFile RecipeImage)
         {
             if (id != recipe.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -148,13 +133,9 @@ namespace MealPlanner.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RecipeExists(recipe.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -166,18 +147,15 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var recipe = await _context.Recipes
                 .Include(r => r.Image)
                 .Include(r => r.RecipeCategory)
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (recipe == null)
-            {
                 return NotFound();
-            }
 
             return View(recipe);
         }
@@ -192,10 +170,10 @@ namespace MealPlanner.Controllers
                 .Include(m => m.RecipeImage)
                 .SingleOrDefaultAsync(m => m.Id == id);
             _context.Images.Remove(recipe.Image);
+
             if (recipe.RecipeImage != null)
-            {
                 _context.Images.Remove(recipe.RecipeImage);
-            }
+            
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
