@@ -27,16 +27,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var store = await _context.Stores
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (store == null)
-            {
                 return NotFound();
-            }
 
             return View(store);
         }
@@ -67,15 +64,12 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var store = await _context.Stores.SingleOrDefaultAsync(m => m.Id == id);
+
             if (store == null)
-            {
                 return NotFound();
-            }
             return View(store);
         }
 
@@ -87,9 +81,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Store store)
         {
             if (id != store.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -101,13 +93,9 @@ namespace MealPlanner.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!StoreExists(store.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -118,16 +106,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var store = await _context.Stores
                 .SingleOrDefaultAsync(m => m.Id == id);
+            
             if (store == null)
-            {
                 return NotFound();
-            }
 
             return View(store);
         }

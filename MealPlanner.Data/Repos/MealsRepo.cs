@@ -21,6 +21,17 @@ namespace MealPlanner.Data.Repos
             _connectionString = connectionString;
         }
 
+        public async Task<Recipe> GetFullMeal(int? id)
+        {
+            return await _context.Recipes
+                .Include(r => r.Image)
+                .Include(r => r.RecipeCategory)
+                .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
+                .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
+                .Include(r => r.RecipeDetails).ThenInclude(a => a.Recipe)
+                .SingleOrDefaultAsync(m => m.Id == id);
+        }
+
         public async Task<List<Recipe>> GetFeaturedMeals()
         {
             return await _context.Recipes
@@ -67,9 +78,7 @@ namespace MealPlanner.Data.Repos
             for (int i = 0; i < sides.Length; i++)
             {
                 if (sides[i].RecipeId == 0)
-                {
                     plan.SideRecipes.Remove(sides[i]);
-                }
             }
 
             _context.MealPlans.Add(plan);
@@ -86,57 +95,18 @@ namespace MealPlanner.Data.Repos
             for (int i = 0; i < sides.Length; i++)
             {
                 if (sides[i].RecipeId == 0)
-                {
                     plan.SideRecipes.Remove(sides[i]);
-                }
             }
 
             _context.Update(plan);
             await _context.SaveChangesAsync();
         }
 
-        public List<RecipeDetail> GetUniqueIngredients(List<MealPlan> meals)
+        public List<RecipeDetail> GetIngredients(List<MealPlan> meals)
         {
             var mealItems = meals.SelectMany(x => x.Recipe.RecipeDetails).ToList();
             mealItems.AddRange(meals.SelectMany(x => x.SideRecipes.SelectMany(y => y.Recipe.RecipeDetails)));
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
-            //var details = new List<RecipeDetail>();
-            //foreach (var meal in meals)
-            //{
-            //    details.AddRange(meal.Recipe.RecipeDetails);
-            //}
-
-            //var shoppingItems = new List<ShoppingItemVM>();
-            //foreach (var detailGroup in details.GroupBy(x => x.IngredientId))
-            //{
-            //    shoppingItems.AddRange(GetShoppingItemsForGroup(detailGroup));
-            //}
-            //return shoppingItems;
         }
-
-        //private List<ShoppingItemVM> GetShoppingItemsForGroup(IGrouping<int?, RecipeDetail> detailGroup)
-        //{
-        //    List<ShoppingItemVM> shoppingItems = new List<ShoppingItemVM>();
-        //    var detail = detailGroup.FirstOrDefault();
-            
-        //    var unitId = detailGroup.FirstOrDefault().UnitId;
-        //    if (detailGroup.All(x => x.UnitId == unitId))
-        //    {
-        //        shoppingItems.Add(new ShoppingItemVM(detail.Ingredient)
-        //        {
-        //            Quantity = detailGroup.FirstOrDefault().Quantity.Value,
-        //            Unit = detailGroup.FirstOrDefault().Unit.Name
-        //        });
-        //    }
-
-        //    return shoppingItems;
-        //}
-
-        //public void CreateImage()
-        //{
-        //    Image image = new Image();
-        //    _context.Images.Add(image);
-        //    _context.SaveChanges();
-        //}
     }
 }

@@ -23,16 +23,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var recipeCategory = await _context.RecipeCategories
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (recipeCategory == null)
-            {
                 return NotFound();
-            }
 
             return View(recipeCategory);
         }
@@ -63,15 +60,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var recipeCategory = await _context.RecipeCategories.SingleOrDefaultAsync(m => m.Id == id);
+
             if (recipeCategory == null)
-            {
                 return NotFound();
-            }
+
             return View(recipeCategory);
         }
 
@@ -83,9 +78,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] RecipeCategory recipeCategory)
         {
             if (id != recipeCategory.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -97,13 +90,9 @@ namespace MealPlanner.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RecipeCategoryExists(recipeCategory.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -114,16 +103,13 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var recipeCategory = await _context.RecipeCategories
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (recipeCategory == null)
-            {
                 return NotFound();
-            }
 
             return View(recipeCategory);
         }

@@ -14,9 +14,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> NewShoppingList()
         {
             var meals = await _mealsRepo.GetMealsWithIngredients();
-
-            var details = _mealsRepo.GetUniqueIngredients(meals);
-
+            var details = _mealsRepo.GetIngredients(meals);
             return View(details);
         }
     }

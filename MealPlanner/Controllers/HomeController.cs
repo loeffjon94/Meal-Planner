@@ -5,20 +5,20 @@ using MealPlanner.Data.Models;
 using System.Threading.Tasks;
 using MealPlanner.Data.ViewModels;
 using Microsoft.Extensions.Configuration;
-using System;
-using MealPlanner.Data.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+using MealPlanner.Data.Repos;
 
 namespace MealPlanner.Controllers
 {
     public class HomeController : BaseController
     {
+        private PlanningRepo _planningRepo;
+
         public HomeController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
         {
+            _planningRepo = new PlanningRepo(context);
         }
 
         public IActionResult Index()
@@ -38,14 +38,10 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> SelectMealPartial(int? id)
         {
-            var plan = await _context.MealPlans
-                .Where(x => x.Id == id)
-                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
-                .SingleOrDefaultAsync();
+            var plan = await _planningRepo.GetPlan(id);
             if (plan == null)
-            {
                 plan = new MealPlan();
-            }
+            
             var recipes = await _context.Recipes
                 .AsNoTracking()
                 .OrderBy(x => x.Name)
@@ -60,54 +56,22 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> SelectMealPartial(MealPlan plan)
         {
             if (plan.RecipeId == 0)
-            {
-                var p = await _context.MealPlans
-                    .Where(x => x.Id == plan.Id)
-                    .Include(x => x.SideRecipes)
-                    .SingleOrDefaultAsync();
-                var sideArray = p.SideRecipes.ToArray();
-                for (int i = 0; i < sideArray.Length; i++)
-                {
-                    p.SideRecipes.Remove(sideArray[i]);
-                }
-                _context.MealPlans.Remove(p);
-            }
+                await _planningRepo.RemovePlan(plan.Id);
             else
             {
                 await _mealsRepo.UpdateRecipe(plan.RecipeId);
                 if (plan.Id > 0)
-                {
                     await _mealsRepo.UpdateMealPlan(plan);
-                }
                 else
-                {
                     _mealsRepo.AddMealPlan(plan);
-                }
             }
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> ClearMealPlans()
         {
-            var mealPlans = await _context.MealPlans.Include(x => x.SideRecipes).ToArrayAsync();
-            for (int i = 0; i < mealPlans.Length; i++)
-            {
-                var sideArray = mealPlans[i].SideRecipes.ToArray();
-                for (int j = 0; i < sideArray.Length; j++)
-                {
-                    mealPlans[i].SideRecipes.Remove(sideArray[j]);
-                }
-                _context.MealPlans.Remove(mealPlans[i]);
-            }
-            await _context.SaveChangesAsync();
+            await _planningRepo.ClearAllPlans();
             return RedirectToAction(nameof(Index));
         }
 
