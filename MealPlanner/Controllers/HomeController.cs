@@ -47,7 +47,6 @@ namespace MealPlanner.Controllers
                 .OrderBy(x => x.Name)
                 .Select(x => new { x.Id, x.Name })
                 .ToListAsync();
-
             ViewData["RecipeList"] = recipes;
             ViewData["Recipes"] = new SelectList(recipes, "Id", "Name");
             return PartialView(plan);
