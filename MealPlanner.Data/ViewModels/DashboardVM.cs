@@ -1,5 +1,4 @@
 ﻿using MealPlanner.Data.Models;
-using System;
 using System.Collections.Generic;
 
 namespace MealPlanner.Data.ViewModels
@@ -13,7 +12,6 @@ namespace MealPlanner.Data.ViewModels
         }
 
         public List<Recipe> FeaturedMeals { get; set; }
-
         public List<MealPlan> MealPlans { get; set; }
     }
 }

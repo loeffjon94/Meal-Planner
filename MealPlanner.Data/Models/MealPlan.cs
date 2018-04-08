@@ -13,14 +13,10 @@ namespace MealPlanner.Data.Models
         }
 
         public int Id { get; set; }
-
         [Display(Name = "Meal")]
         public int RecipeId { get; set; }
-
         public virtual Recipe Recipe { get; set; }
-
         public ICollection<SideRelationships> SideRecipes { get; set; }
-
         [NotMapped]
         public List<Recipe> RecipeList { get; set; }
     }
