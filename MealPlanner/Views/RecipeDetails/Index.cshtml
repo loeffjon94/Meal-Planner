@@ -1,0 +1,38 @@
+﻿@model IEnumerable<MealPlanner.Data.Models.RecipeDetail>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a asp-controller="RecipeDetails" asp-action="Create" asp-route-recipeId="@ViewBag.RecipeId">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ingredient)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ingredient.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity) @item.Unit.Name
+            </td>
+            <td>
+                <a asp-controller="RecipeDetails" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="RecipeDetails" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MealPlanner.Data.Models.Recipe>
+
+<div class="row">
+    <div class="col-sm-11">
+        <h2>Recipes</h2>
+    </div>
+    <div class="col-sm-1">
+        <p style="margin-top: 21px;">
+            <a asp-action="Create" class="btn btn-sm btn-success">Create <i class="glyphicon glyphicon-plus-sign"></i></a>
+        </p>
+    </div>
+</div>
+<hr />
+<table class="table" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecipeCategory)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecipeCategory.Name)
+            </td>
+            <td>
+                <div class="btn-group" style="min-width: 69px; float:right;">
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
+                </div>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

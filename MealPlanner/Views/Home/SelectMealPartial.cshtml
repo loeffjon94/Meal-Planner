@@ -1,0 +1,96 @@
+﻿@model MealPlanner.Data.Models.MealPlan
+
+<div class="modal fade in" id="selectMealModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #2c3e50;">
+                <button type="button" class="close" onclick="closeSelectMealModal()" style="color: white;"><i>&times;</i></button>
+                <h3 class="modal-title" style="color: white;">Select Meal</h3>
+            </div>
+            <form asp-action="SelectMealPartial" id="selectMealForm">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="RecipeId" class="control-label"></label>
+                        <select asp-for="RecipeId" class="form-control" asp-items="ViewBag.Recipes"><option>Select a Meal</option></select>
+                    </div>
+                    @{ int count = 0;}
+                    <div id="sidesDiv">
+                        @foreach (var side in Model.SideRecipes)
+                        {
+                            <div class="form-group">
+                                <label class="control-label">Side @(count + 1)</label>
+                                <select id="SideRecipes[@(count)].RecipeId" name="SideRecipes[@(count)].RecipeId" class="form-control">
+                                    <option>Select a Side</option>
+                                    @foreach (var recipe in ViewBag.Recipes as SelectList)
+                                    {
+                                        if (int.Parse(recipe.Value) == side.RecipeId)
+                                        {
+                                            <option value="@recipe.Value" selected="selected">@recipe.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@recipe.Value">@recipe.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            count++;
+                        }
+                    </div>
+                    <a href="#stay" onclick="addSide()"><i class="glyphicon glyphicon-plus"></i> Add Side</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" onclick="closeSelectMealModal()">Close</button>
+                    @if (Model.Id > 0)
+                    {
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeMeal()">Remove</button>
+                    }
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@{
+    var data = ViewBag.RecipeList;
+
+    //serialize collection of anonymous objects
+    string arrStr = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.None);
+}
+
+<script>
+    var count = @Model.SideRecipes.Count();
+    var recipeOptions = JSON.parse('@arrStr'.replace(/&quot;/g, '"'));
+
+    function closeSelectMealModal() {
+        $('#selectMealModal').modal('hide');
+    }
+
+    function removeMeal() {
+        $('#RecipeId').val(null);
+        $('#selectMealForm').submit();
+    }
+
+    function addSide() {
+        $('#sidesDiv').append('<div class="form-group" id="hiddenSide' + count + '" style="display:none;">' +
+            '<label class="control-label">Side ' + (count + 1) + '</label>' +
+            '<select id="SideRecipes[' + count + '].RecipeId" name="SideRecipes[' + count + '].RecipeId" class="form-control sideSelect" asp-items="ViewBag.Recipes"><option>Select a Side</option></select>' +
+            '</div>');
+
+        
+        $('.sideSelect').each(function (i, obj) {
+            if (obj.childElementCount <= 1) {
+                for (var i = 0; i < recipeOptions.length; i++) {
+                    $(this).append('<option value="' + recipeOptions[i].Id + '">' + recipeOptions[i].Name + '</option>')
+                }
+            }
+        });
+
+        $('#hiddenSide' + count).show(200);
+
+        count++;
+    }
+</script>

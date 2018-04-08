@@ -1,0 +1,88 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+.carousel img {
+    width: auto;
+    height: 40vh;
+    max-height: 40vh;
+}
+
+.carousel-inner > .item > img {
+    margin: 0 auto;
+}
+
+.centered {
+    position: fixed;
+    top: 35%;
+    left: 45%;
+}
+
+.table {
+    min-width: 100% !important;
+}
+
+.wideBtn {
+    width: 100%;
+}
+
+/*Square grid*/
+
+.frontpage_square {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 4px;
+}
+
+.frontpage_square_container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    text-align:center;
+    width: 100%;
+}
+        
+
+.mealTitle {
+    color: black; 
+    background-color: rgba(255, 255, 255, .7);
+    padding: 10px;
+    position: absolute;
+    bottom: 10px;
+}

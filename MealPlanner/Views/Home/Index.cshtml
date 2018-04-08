@@ -1,0 +1,17 @@
+﻿@model IEnumerable<MealPlanner.Data.Models.Recipe>
+
+<h1>Meal Planner</h1>
+<hr />
+
+<div id="dashboardDiv" style="height: 100%; width: 100%;">
+    
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#loading').show();
+        $('#dashboardDiv').load('/Home/Dashboard', function () {
+            $('#loading').hide();
+        })
+    })
+</script>
