@@ -11,15 +11,11 @@ namespace MealPlanner.Data.Models
         }
 
         public int Id { get; set; }
-
         [StringLength(100)]
         public string Name { get; set; }
-
         [Display(Name = "Store")]
         public int StoreId { get; set; }
-
         public virtual Store Store { get; set; }
-
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
     }
 }

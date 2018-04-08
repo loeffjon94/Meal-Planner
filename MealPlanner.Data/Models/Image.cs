@@ -12,14 +12,10 @@ namespace MealPlanner.Data.Models
         }
 
         public int Id { get; set; }
-
         public byte[] Data { get; set; }
-
         [StringLength(4000)]
         public string DataUrl { get; set; }
-
         public ICollection<Recipe> Recipes { get; set; }
-
         public ICollection<Recipe> RecipeLists { get; set; }
     }
 }

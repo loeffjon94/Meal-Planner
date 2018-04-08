@@ -11,10 +11,8 @@ namespace MealPlanner.Data.Models
         }
 
         public int Id { get; set; }
-
         [StringLength(100)]
         public string Name { get; set; }
-
         public ICollection<Ingredient> Ingredients { get; set; }
     }
 }
