@@ -1,21 +1,22 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using MealPlanner.Data.Contexts;
+using MealPlanner.Models.Entities;
+using MealPlanner.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
-using MealPlanner.Data.Repos;
 
 namespace MealPlanner.Controllers
 {
     public class IngredientsController : BaseController
     {
-        private IngredientRepo _ingredientRepo;
+        private IngredientService _ingredientService;
 
         public IngredientsController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
         {
-            _ingredientRepo = new IngredientRepo(context);
+            _ingredientService = new IngredientService(context);
         }
 
         // GET: Ingredients
@@ -31,7 +32,7 @@ namespace MealPlanner.Controllers
             if (id == null)
                 return NotFound();
 
-            var ingredient = await _ingredientRepo.GetIngredient(id);
+            var ingredient = await _ingredientService.GetIngredient(id);
 
             if (ingredient == null)
                 return NotFound();
@@ -55,7 +56,7 @@ namespace MealPlanner.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _ingredientRepo.CreateIngredient(ingredient);
+                await _ingredientService.CreateIngredient(ingredient);
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
@@ -70,7 +71,7 @@ namespace MealPlanner.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _ingredientRepo.GetIngredient(id);
+            var ingredient = await _ingredientService.GetIngredient(id);
 
             if (ingredient == null)
                 return NotFound();
@@ -93,7 +94,7 @@ namespace MealPlanner.Controllers
             {
                 try
                 {
-                    await _ingredientRepo.UpdateIngredient(ingredient);
+                    await _ingredientService.UpdateIngredient(ingredient);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -114,7 +115,7 @@ namespace MealPlanner.Controllers
             if (id == null)
                 return NotFound();
 
-            var ingredient = await _ingredientRepo.GetIngredient(id);
+            var ingredient = await _ingredientService.GetIngredient(id);
 
             if (ingredient == null)
                 return NotFound();
@@ -127,7 +128,7 @@ namespace MealPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _ingredientRepo.DeleteIngredient(id);
+            await _ingredientService.DeleteIngredient(id);
             return RedirectToAction(nameof(Index));
         }
 

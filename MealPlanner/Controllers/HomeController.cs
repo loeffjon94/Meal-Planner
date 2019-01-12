@@ -1,24 +1,25 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MealPlanner.Models;
-using MealPlanner.Data.Models;
 using System.Threading.Tasks;
-using MealPlanner.Data.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using MealPlanner.Data.Repos;
+using MealPlanner.Services;
+using MealPlanner.Data.Contexts;
+using MealPlanner.Models.Models;
+using MealPlanner.Models.Entities;
 
 namespace MealPlanner.Controllers
 {
     public class HomeController : BaseController
     {
-        private PlanningRepo _planningRepo;
+        private PlanningService _planningService;
 
         public HomeController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
         {
-            _planningRepo = new PlanningRepo(context);
+            _planningService = new PlanningService(context);
         }
 
         public IActionResult Index()
@@ -28,17 +29,17 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> Dashboard()
         {
-            DashboardVM vm = new DashboardVM()
+            DashboardModel vm = new DashboardModel()
             {
-                FeaturedMeals = await _mealsRepo.GetFeaturedMeals(),
-                MealPlans = await _mealsRepo.GetMealPlans()
+                FeaturedMeals = await _mealsService.GetFeaturedMeals(),
+                MealPlans = await _mealsService.GetMealPlans()
             };
             return PartialView(vm);
         }
 
         public async Task<IActionResult> SelectMealPartial(int? id)
         {
-            var plan = await _planningRepo.GetPlan(id);
+            var plan = await _planningService.GetPlan(id);
             if (plan == null)
                 plan = new MealPlan();
             
@@ -56,14 +57,14 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> SelectMealPartial(MealPlan plan)
         {
             if (plan.RecipeId == 0)
-                await _planningRepo.RemovePlan(plan.Id);
+                await _planningService.RemovePlan(plan.Id);
             else
             {
-                await _mealsRepo.UpdateRecipe(plan.RecipeId);
+                await _mealsService.UpdateRecipe(plan.RecipeId);
                 if (plan.Id > 0)
-                    await _mealsRepo.UpdateMealPlan(plan);
+                    await _mealsService.UpdateMealPlan(plan);
                 else
-                    _mealsRepo.AddMealPlan(plan);
+                    _mealsService.AddMealPlan(plan);
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -71,7 +72,7 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> ClearMealPlans()
         {
-            await _planningRepo.ClearAllPlans();
+            await _planningService.ClearAllPlans();
             return RedirectToAction(nameof(Index));
         }
 

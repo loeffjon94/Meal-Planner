@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
+using MealPlanner.Data.Contexts;
+using MealPlanner.Models.Entities;
 
 namespace MealPlanner.Controllers
 {

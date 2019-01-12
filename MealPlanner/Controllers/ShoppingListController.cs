@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using MealPlanner.Data.Contexts;
 
 namespace MealPlanner.Controllers
 {
@@ -13,8 +13,8 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> NewShoppingList()
         {
-            var meals = await _mealsRepo.GetMealsWithIngredients();
-            var details = _mealsRepo.GetIngredients(meals);
+            var meals = await _mealsService.GetMealsWithIngredients();
+            var details = _mealsService.GetIngredients(meals);
             return View(details);
         }
     }

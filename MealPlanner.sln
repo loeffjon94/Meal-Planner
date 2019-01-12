@@ -5,9 +5,15 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlanner", "MealPlanner\MealPlanner.csproj", "{EF104C88-53F1-4FEC-8D20-AC82F451C4DB}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MealPlanner.DB", "MealPlanner.DB\MealPlanner.DB.sqlproj", "{3F364414-A2BC-4FCD-9B2D-885C8E926C46}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlanner.Data", "MealPlanner.Data\MealPlanner.Data.csproj", "{12BB58D7-376C-41D1-B044-569B8305A04E}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MealPlanner.DB", "MealPlanner.DB\MealPlanner.DB.sqlproj", "{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlanner.Models", "MealPlanner.Models\MealPlanner.Models.csproj", "{2DE29391-3B93-4A23-AAC3-2B23A20C1BC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MealPlanner.Infrastructure", "MealPlanner.Infrastructure\MealPlanner.Infrastructure.csproj", "{436D420C-38C0-4457-B539-F3E7B2F14DFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MealPlanner.Services", "MealPlanner.Services\MealPlanner.Services.csproj", "{0C143EAF-C87A-42AE-AAC2-1C709EAD8EC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,16 +25,28 @@ Global
 		{EF104C88-53F1-4FEC-8D20-AC82F451C4DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF104C88-53F1-4FEC-8D20-AC82F451C4DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF104C88-53F1-4FEC-8D20-AC82F451C4DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F364414-A2BC-4FCD-9B2D-885C8E926C46}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{12BB58D7-376C-41D1-B044-569B8305A04E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12BB58D7-376C-41D1-B044-569B8305A04E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12BB58D7-376C-41D1-B044-569B8305A04E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12BB58D7-376C-41D1-B044-569B8305A04E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E27A50C6-AF3E-4603-8628-BA7B46BE3FF0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2DE29391-3B93-4A23-AAC3-2B23A20C1BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE29391-3B93-4A23-AAC3-2B23A20C1BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE29391-3B93-4A23-AAC3-2B23A20C1BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE29391-3B93-4A23-AAC3-2B23A20C1BC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{436D420C-38C0-4457-B539-F3E7B2F14DFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{436D420C-38C0-4457-B539-F3E7B2F14DFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{436D420C-38C0-4457-B539-F3E7B2F14DFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{436D420C-38C0-4457-B539-F3E7B2F14DFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C143EAF-C87A-42AE-AAC2-1C709EAD8EC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C143EAF-C87A-42AE-AAC2-1C709EAD8EC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C143EAF-C87A-42AE-AAC2-1C709EAD8EC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C143EAF-C87A-42AE-AAC2-1C709EAD8EC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

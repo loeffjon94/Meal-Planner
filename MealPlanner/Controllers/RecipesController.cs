@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MealPlanner.Data.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using MealPlanner.Data.Contexts;
+using MealPlanner.Models.Entities;
 
 namespace MealPlanner.Controllers
 {
@@ -20,7 +21,12 @@ namespace MealPlanner.Controllers
         // GET: Recipes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipes.Include(r => r.Image).Include(r => r.RecipeCategory).OrderBy(x => x.Name).ToListAsync());
+            return View(await _context.Recipes
+                .AsNoTracking()
+                .Include(r => r.Image)
+                .Include(r => r.RecipeCategory)
+                .OrderBy(x => x.Name)
+                .ToListAsync());
         }
 
         // GET: Recipes/Details/5
@@ -30,7 +36,7 @@ namespace MealPlanner.Controllers
             if (id == null)
                 return NotFound();
 
-            var recipe = await _mealsRepo.GetFullMeal(id);
+            var recipe = await _mealsService.GetFullMeal(id);
             if (recipe == null)
                 return NotFound();
 
