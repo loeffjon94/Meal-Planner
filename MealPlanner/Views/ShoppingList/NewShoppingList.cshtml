@@ -13,7 +13,7 @@
     </thead>
     <tbody>
         @foreach (var item in Model) {
-            <tr id="row@(item.IngredientId)">
+            <tr id="row@(item.Id)">
                 <td>
                     <div style="padding: 8px;">
                         @item.IngredientName (@item.Quantity @item.Unit)
@@ -21,7 +21,7 @@
                 </td>
                 <td>
                     <div class="btn-group" style="float:right; padding: 8px;">
-                        <a href="#stay" onclick="removeItem(@item.IngredientId)" class="btn btn-sm btn-danger">
+                        <a href="#stay" onclick="removeItem(@item.Id)" class="btn btn-sm btn-danger">
                             <i class="glyphicon glyphicon-remove"></i>
                         </a>
                     </div>

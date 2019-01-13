@@ -11,6 +11,7 @@ namespace MealPlanner.Services
         {
             return recipeDetails.GroupBy(x => new { x.IngredientId, x.UnitId }).Select(x => new ShoppingItem
             {
+                Id = x.Select(y => y.Id).FirstOrDefault(),
                 IngredientId = x.Where(y => y.IngredientId.HasValue).Select(y => y.IngredientId.Value).FirstOrDefault(),
                 IngredientName = x.Where(y => y.IngredientId.HasValue).Select(y => y.Ingredient.Name).FirstOrDefault(),
                 Quantity = x.Where(y => y.Quantity.HasValue).Sum(y => y.Quantity.Value),
