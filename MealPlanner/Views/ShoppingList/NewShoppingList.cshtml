@@ -9,6 +9,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.IngredientName)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -23,7 +26,12 @@
                 </td>
                 <td>
                     <div style="padding: 8px;">
-                        @item.IngredientName (@item.Quantity @item.Unit)
+                        @item.IngredientName
+                    </div>
+                </td>
+                <td>
+                    <div style="padding: 8px;">
+                        @item.Quantity @item.Unit
                     </div>
                 </td>
                 <td>
@@ -80,7 +88,7 @@
             $('#drillIn' + id).remove();
         }
         else {
-            $('#row' + id).after('<tr><td colspan="3" id="drillIn' + id + '"></td></tr>');
+            $('#row' + id).after('<tr><td colspan="4" id="drillIn' + id + '"></td></tr>');
             $('#drillIn' + id).load('/ShoppingList/RecipeDrillIn/' + id);
         }
     }
