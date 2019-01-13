@@ -124,16 +124,20 @@ namespace MealPlanner.Controllers
             {
                 try
                 {
-                    using (var stream = new MemoryStream())
+                    if (RecipeImage != null)
                     {
-                        RecipeImage.CopyTo(stream);
-                        Image recipeImage = new Image()
+                        using (var stream = new MemoryStream())
                         {
-                            Data = stream.ToArray()
-                        };
-                        recipeImage.RecipeLists.Add(recipe);
-                        _context.Images.Add(recipeImage);
+                            RecipeImage.CopyTo(stream);
+                            Image recipeImage = new Image()
+                            {
+                                Data = stream.ToArray()
+                            };
+                            recipeImage.RecipeLists.Add(recipe);
+                            _context.Images.Add(recipeImage);
+                        }
                     }
+                    
                     _context.Update(recipe);
                     await _context.SaveChangesAsync();
                 }
@@ -144,7 +148,7 @@ namespace MealPlanner.Controllers
                     else
                         throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = recipe.Id });
             }
             ViewData["RecipeCategories"] = new SelectList(_context.RecipeCategories.OrderBy(x => x.Name), "Id", "Name", recipe.RecipeCategoryId);
             return View(recipe);
