@@ -2,6 +2,7 @@
 using MealPlanner.Data.Contexts;
 using MealPlanner.Infrastructure.Extensions;
 using MealPlanner.Models.Entities;
+using MealPlanner.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace MealPlanner.Services
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
         }
 
-        public async Task<List<Recipe>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
+        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
         {
             return await _context.Recipes
                 .AsNoTracking()
@@ -118,6 +119,13 @@ namespace MealPlanner.Services
                             x.RecipeDetails.Where(y => y.IngredientId == ingredientId).Count() > 0 && 
                             x.RecipeDetails.Where(y => y.UnitId == unitId).Count() > 0 &&
                             (x.MealPlans.Count() > 0 || x.SidePlans.Count() > 0))
+                .Select(x => new RecipeDrillInModel
+                {
+                    RecipeId = x.Id,
+                    RecipeName = x.Name,
+                    TotalQuantity = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Sum(y => y.Quantity),
+                    UnitName = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Select(y => y.Unit.Name).FirstOrDefault()
+                })
                 .ToListAsync();
         }
     }

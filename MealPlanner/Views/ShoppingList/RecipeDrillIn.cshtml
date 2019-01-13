@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MealPlanner.Models.Entities.Recipe>
+﻿@model IEnumerable<MealPlanner.Models.Models.RecipeDrillInModel>
 
 <table class="table table-condensed table-striped" style="width: 100%;">
     <tbody>
@@ -6,9 +6,12 @@
         {
             <tr>
                 <td>
-                    <a asp-action="Details" asp-controller="Recipes" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Details" asp-controller="Recipes" asp-route-id="@item.RecipeId">
+                        @Html.DisplayFor(modelItem => item.RecipeName)
                     </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalQuantity) @Html.DisplayFor(modelItem => item.UnitName)
                 </td>
             </tr>
         }
