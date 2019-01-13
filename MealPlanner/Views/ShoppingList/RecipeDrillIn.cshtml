@@ -1,0 +1,16 @@
+﻿@model IEnumerable<MealPlanner.Models.Entities.Recipe>
+
+<table class="table table-condensed table-striped" style="width: 100%;">
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-controller="Recipes" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -57,7 +57,6 @@ namespace MealPlanner.Services
             var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
             return await _context.MealPlans
                 .AsNoTracking()
-                .Where(x => !x.ExcludeFromShoppingList)
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
@@ -106,9 +105,20 @@ namespace MealPlanner.Services
 
         public List<RecipeDetail> GetIngredients(List<MealPlan> meals)
         {
-            var mealItems = meals.SelectMany(x => x.Recipe.RecipeDetails).ToList();
-            mealItems.AddRange(meals.SelectMany(x => x.SideRecipes.SelectMany(y => y.Recipe.RecipeDetails)));
+            var mealItems = meals.Where(x => !x.ExcludeFromShoppingList).SelectMany(x => x.Recipe.RecipeDetails).ToList();
+            mealItems.AddRange(meals.SelectMany(x => x.SideRecipes.Where(y => !y.ExcludeFromShoppingList).SelectMany(y => y.Recipe.RecipeDetails)));
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
+        }
+
+        public async Task<List<Recipe>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
+        {
+            return await _context.Recipes
+                .AsNoTracking()
+                .Where(x => x.RecipeDetails.Count() > 0 && 
+                            x.RecipeDetails.Where(y => y.IngredientId == ingredientId).Count() > 0 && 
+                            x.RecipeDetails.Where(y => y.UnitId == unitId).Count() > 0 &&
+                            (x.MealPlans.Count() > 0 || x.SidePlans.Count() > 0))
+                .ToListAsync();
         }
     }
 }

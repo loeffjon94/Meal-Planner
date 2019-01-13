@@ -61,5 +61,25 @@ namespace MealPlanner.Services
             var search = listRequest.Execute();
             return search.Items.First().Link;
         }
+
+        public async Task<int?> GetIngredientId(int recipeDetailId)
+        {
+            return await _context
+                .RecipeDetails
+                .AsNoTracking()
+                .Where(x => x.Id == recipeDetailId)
+                .Select(x => x.IngredientId)
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<int?> GetUnitId(int recipeDetailId)
+        {
+            return await _context
+                .RecipeDetails
+                .AsNoTracking()
+                .Where(x => x.Id == recipeDetailId)
+                .Select(x => x.UnitId)
+                .SingleOrDefaultAsync();
+        }
     }
 }

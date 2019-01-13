@@ -18,5 +18,14 @@ namespace MealPlanner.Controllers
             var list = _mealsService.GetIngredients(meals).GenerateShoppingList();
             return View(list);
         }
+
+        public async Task<IActionResult> RecipeDrillIn(int id)
+        {
+            var ingredientIdTask = _recipeService.GetIngredientId(id);
+            var unitIdTask = _recipeService.GetUnitId(id);
+            await Task.WhenAll(ingredientIdTask, unitIdTask);
+
+            return PartialView(await _mealsService.GetMealsByIngredientInfo(ingredientIdTask.Result, unitIdTask.Result));
+        }
     }
 }

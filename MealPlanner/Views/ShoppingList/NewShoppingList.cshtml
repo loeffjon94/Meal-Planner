@@ -2,9 +2,10 @@
 
 <h2>Grocery List</h2>
 <hr />
-<table class="table" id="shoppingListTable">
+<table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.IngredientName)
             </th>
@@ -12,8 +13,14 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
             <tr id="row@(item.Id)">
+                <td>
+                    <div style="padding: 8px;">
+                        <a href="javascript:drillIntoItem(@item.Id)"><i class="glyphicon glyphicon-plus"></i></a>
+                    </div>
+                </td>
                 <td>
                     <div style="padding: 8px;">
                         @item.IngredientName (@item.Quantity @item.Unit)
@@ -67,4 +74,14 @@
             $(this).addClass('selected');
         }
     })
+
+    function drillIntoItem(id) {
+        if ($('#drillIn' + id).length) {
+            $('#drillIn' + id).remove();
+        }
+        else {
+            $('#row' + id).after('<tr><td colspan="3" id="drillIn' + id + '"></td></tr>');
+            $('#drillIn' + id).load('/ShoppingList/RecipeDrillIn/' + id);
+        }
+    }
 </script>
