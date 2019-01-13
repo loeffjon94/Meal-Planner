@@ -14,7 +14,7 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> NewShoppingList()
         {
-            var meals = await _mealsService.GetMealsWithIngredients();
+            var meals = await _mealsService.GetShoppingMealsWithIngredients();
             var list = _mealsService.GetIngredients(meals).GenerateShoppingList();
             return View(list);
         }

@@ -33,11 +33,7 @@ else
     </dl>
 </div>
 
-@Html.Partial("../RecipeDetails/Index.cshtml", Model.RecipeDetails.OrderBy(x => x.Ingredient.Name))
-@*@if (Model.RecipeImage != null && Model.RecipeImage.Data != null)
-{
-    <img src="data:image;base64,@System.Convert.ToBase64String(Model.RecipeImage.Data)" />
-}*@
+@await Html.PartialAsync("../RecipeDetails/Index.cshtml", Model.RecipeDetails.OrderBy(x => x.Ingredient.Name))
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

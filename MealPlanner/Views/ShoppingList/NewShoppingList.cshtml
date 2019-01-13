@@ -21,7 +21,7 @@
                 </td>
                 <td>
                     <div class="btn-group" style="float:right; padding: 8px;">
-                        <a href="#stay" onclick="removeItem(@item.Id)" class="btn btn-sm btn-danger">
+                        <a href="javascript:removeItem(@item.Id)" class="btn btn-sm btn-danger">
                             <i class="glyphicon glyphicon-remove"></i>
                         </a>
                     </div>
@@ -31,7 +31,7 @@
     </tbody>
 </table>
 
-<a href="#stay" id="undoBtn" onclick="undoRemove()" class="btn btn-warning" style="width: 100%; display:none; position:fixed; bottom: 0; right: 0;">Undo</a>
+<a href="javascript:undoRemove()" id="undoBtn" class="btn btn-warning" style="width: 100%; display:none; position:fixed; bottom: 0; right: 0;">Undo</a>
 
 <style>
     td {

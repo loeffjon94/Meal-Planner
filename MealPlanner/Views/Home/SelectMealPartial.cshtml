@@ -39,7 +39,12 @@
                             count++;
                         }
                     </div>
-                    <a href="#stay" onclick="addSide()"><i class="glyphicon glyphicon-plus"></i> Add Side</a>
+                    <a href="javascript:addSide()"><i class="glyphicon glyphicon-plus"></i> Add Side</a>
+                    <hr />
+                    <div class="form-group">
+                        <label asp-for="ExcludeFromShoppingList" class="control-label" style="padding-right: 10px;"></label>
+                        <input type="checkbox" asp-for="ExcludeFromShoppingList" />
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-default" onclick="closeSelectMealModal()">Close</button>

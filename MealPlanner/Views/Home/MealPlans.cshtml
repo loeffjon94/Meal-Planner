@@ -17,7 +17,7 @@
             recipeName += ", " + side.Recipe.Name;
         }
         <div class="col-xs-6 col-sm-4 col-md-3">
-            <a href="#stay" class="thumbnail" onclick="showSelectMealModal('@meal.Id')">
+            <a href="javascript:showSelectMealModal('@meal.Id')" class="thumbnail">
                 @if (meal.Recipe.Image.Data != null)
                 {
                     <div class="frontpage_square" style="background-image: url(data:image;base64,@System.Convert.ToBase64String(meal.Recipe.Image.Data));">
@@ -34,7 +34,7 @@
         </div>
     }
     <div class="col-xs-6 col-sm-4 col-md-3">
-        <a href="#stay" class="thumbnail" onclick="showSelectMealModal('null')">
+        <a href="javascript:showSelectMealModal('null')" class="thumbnail">
             <div class="frontpage_square">
                 <div class="frontpage_square_container">
                     <h1><span style="font-size: 12vh; color: #2c3e50"><i class="glyphicon glyphicon-plus"></i></span><br /><span style="font-size: 3vh;">Add a Meal</span></h1>

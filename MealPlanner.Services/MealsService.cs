@@ -52,11 +52,12 @@ namespace MealPlanner.Services
                 .ToListAsync();
         }
 
-        public async Task<List<MealPlan>> GetMealsWithIngredients()
+        public async Task<List<MealPlan>> GetShoppingMealsWithIngredients()
         {
             var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
             return await _context.MealPlans
                 .AsNoTracking()
+                .Where(x => !x.ExcludeFromShoppingList)
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
                 .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
