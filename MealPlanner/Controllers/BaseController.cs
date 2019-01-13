@@ -9,6 +9,7 @@ namespace MealPlanner.Controllers
     {
         protected readonly MealPlannerContext _context;
         protected readonly MealsService _mealsService;
+        protected readonly RecipeService _recipeService;
         protected readonly IConfiguration _configuration;
 
         public BaseController(MealPlannerContext context, IConfiguration configuration)
@@ -16,6 +17,7 @@ namespace MealPlanner.Controllers
             _configuration = configuration;
             _context = context;
             _mealsService = new MealsService(context, configuration.GetConnectionString("MealPlannerContext"));
+            _recipeService = new RecipeService(context, configuration);
         }
     }
 }

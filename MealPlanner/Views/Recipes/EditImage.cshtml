@@ -1,0 +1,32 @@
+﻿@model MealPlanner.Models.Models.EditImageModel
+
+<div class="modal fade in" id="editImageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #2c3e50;">
+                <button type="button" class="close" onclick="closeEditImageModal()" style="color: white;"><i>&times;</i></button>
+                <h3 class="modal-title" style="color: white;">Edit Image</h3>
+            </div>
+            <form asp-action="EditImage">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="RecipeId" />
+                    <div class="form-group">
+                        <label asp-for="ImageSearch" class="control-label"></label>
+                        <input asp-for="ImageSearch" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" onclick="closeEditImageModal()">Close</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeEditImageModal() {
+        $('#editImageModal').modal('hide');
+    }
+</script>

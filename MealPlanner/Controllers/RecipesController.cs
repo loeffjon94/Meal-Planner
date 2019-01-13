@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
+using MealPlanner.Services;
+using MealPlanner.Models.Models;
 
 namespace MealPlanner.Controllers
 {
@@ -64,11 +66,10 @@ namespace MealPlanner.Controllers
             if (ModelState.IsValid)
             {
                 recipe.LastViewed = DateTime.Now;
-
-                RecipeService recipeService = new RecipeService(_configuration);
+                
                 Image image = new Image()
                 {
-                    DataUrl = recipeService.GetImage(recipe.Name)
+                    DataUrl = _recipeService.GetImage(recipe.Name)
                 };
                 image.Recipes.Add(recipe);
 
@@ -183,6 +184,28 @@ namespace MealPlanner.Controllers
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> EditImage(int id)
+        {
+            return PartialView(new EditImageModel
+            {
+                RecipeId = id,
+                ImageSearch = await _recipeService.GetRecipeName(id)
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditImage(EditImageModel model)
+        {
+            if (model.RecipeId <= 0 || string.IsNullOrEmpty(model.ImageSearch))
+                return NotFound();
+
+            var image = await _recipeService.GetRecipeDisplayImage(model.RecipeId);
+            image.DataUrl = _recipeService.GetImage(model.ImageSearch);
+            _context.Update(image);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = model.RecipeId });
         }
 
         public async Task<IActionResult> DownloadRecipe(int id)
