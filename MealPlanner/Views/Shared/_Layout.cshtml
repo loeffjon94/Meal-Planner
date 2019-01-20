@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/lib/hamburgers/hamburgers.min.css?@DateTime.Now" />
     <link rel="stylesheet" href="~/css/Flatly.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.min.css?@DateTime.Now" />
 </head>
 <body>
@@ -22,12 +23,12 @@
             </a>
             <hr />
             <ul class="menu-section-list">
-                <li><a asp-area="" asp-controller="Recipes" asp-action="Index">Recipes</a></li>
-                <li><a asp-area="" asp-controller="Ingredients" asp-action="Index">Ingredients</a></li>
-                <li><a asp-area="" asp-controller="ShoppingList" asp-action="NewShoppingList">Grocery List</a></li>
-                <li><a asp-area="" asp-controller="Stores" asp-action="Index">Stores</a></li>
-                <li><a asp-area="" asp-controller="Units" asp-action="Index">Units</a></li>
-                <li><a asp-area="" asp-controller="RecipeCategories" asp-action="Index">Recipe Categories</a></li>
+                <li><a asp-area="" asp-controller="Recipes" asp-action="Index"><i class="fas fa-list-ul"></i> Recipes</a></li>
+                <li><a asp-area="" asp-controller="Ingredients" asp-action="Index"><i class="fas fa-puzzle-piece"></i> Ingredients</a></li>
+                <li><a asp-area="" asp-controller="ShoppingList" asp-action="NewShoppingList"><i class="fas fa-shopping-cart"></i> Grocery List</a></li>
+                <li><a asp-area="" asp-controller="Stores" asp-action="Index"><i class="fas fa-store-alt"></i> Stores</a></li>
+                <li><a asp-area="" asp-controller="Units" asp-action="Index"><i class="fas fa-weight"></i> Units</a></li>
+                <li><a asp-area="" asp-controller="RecipeCategories" asp-action="Index"><i class="fas fa-info-circle"></i> Categories</a></li>
             </ul>
         </section>
     </nav>
