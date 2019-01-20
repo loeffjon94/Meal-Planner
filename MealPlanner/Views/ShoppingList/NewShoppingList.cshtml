@@ -54,42 +54,35 @@
     }
 </style>
 
-<script>
-    var removed = [];
+@section Scripts {
+    <script>
+        var removed = [];
 
-    function removeItem(id) {
-        removed.push(id);
-        $('#row' + id).children('td').children('div').slideUp(200);
-        $('#undoBtn').slideDown(200);
-    }
+        function removeItem(id) {
+            removed.push(id);
+            $('#row' + id).children('td').children('div').slideUp(200);
+            $('#undoBtn').slideDown(200);
+        }
 
-    function undoRemove() {
-        $('#row' + removed.pop()).children('td').children('div').slideDown(200);
-        if (removed.length == 0) {
-            $('#undoBtn').slideUp(200);
+        function undoRemove() {
+            $('#row' + removed.pop()).children('td').children('div').slideDown(200);
+            if (removed.length == 0) {
+                $('#undoBtn').slideUp(200);
+            }
         }
-    }
 
-    $('tr').on('click', function () {
-        if ($(this).hasClass('selected')) {
-            $(this).find('td').css('background-color', 'transparent');
-            $(this).find('td').css('color', '#2c3e50');
-            $(this).removeClass('selected');
-        }
-        else {
-            $(this).find('td').css('background-color', '#2c3e50');
-            $(this).find('td').css('color', 'white');
-            $(this).addClass('selected');
-        }
-    })
+        $('tr').on('click', function () {
+            $(this).toggleClass('selected');
+        })
 
-    function drillIntoItem(id) {
-        if ($('#drillIn' + id).length) {
-            $('#drillIn' + id).remove();
+        function drillIntoItem(id) {
+            if ($('#drillIn' + id).length) {
+                $('#drillIn' + id).remove();
+            }
+            else {
+                $('#row' + id).after('<tr><td colspan="4" id="drillIn' + id + '"></td></tr>');
+                $('#drillIn' + id).load('/ShoppingList/RecipeDrillIn/' + id);
+            }
         }
-        else {
-            $('#row' + id).after('<tr><td colspan="4" id="drillIn' + id + '"></td></tr>');
-            $('#drillIn' + id).load('/ShoppingList/RecipeDrillIn/' + id);
-        }
-    }
-</script>
+    </script>
+}

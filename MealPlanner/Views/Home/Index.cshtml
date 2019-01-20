@@ -3,15 +3,23 @@
 <h1>Meal Planner</h1>
 <hr />
 
-<div id="dashboardDiv" style="height: 100%; width: 100%;">
-    
-</div>
+<div id="dashboardDiv" style="height: 100%; width: 100%;"></div>
 
-<script>
-    $(document).ready(function () {
-        $('#loading').show();
-        $('#dashboardDiv').load('/Home/Dashboard', function () {
-            $('#loading').hide();
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#loading').show();
+            $('#dashboardDiv').load('/Home/Dashboard', function () {
+                $('#loading').hide();
+            })
         })
-    })
-</script>
+
+        function showSelectMealModal(id) {
+            $('#loading').show();
+            $('#modalDiv').load('../Home/SelectMealPartial?id=' + id, function () {
+                $('#selectMealModal').modal('show');
+                $('#loading').hide();
+            });
+        }
+    </script>
+}

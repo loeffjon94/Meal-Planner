@@ -35,7 +35,6 @@ else
         </dd>
     </dl>
 </div>
-<div id="modalDiv"></div>
 
 @await Html.PartialAsync("../RecipeDetails/Index.cshtml", Model.RecipeDetails.OrderBy(x => x.Ingredient.Name))
 

@@ -1,17 +1,5 @@
 ﻿@model MealPlanner.Models.Models.DashboardModel
 
 @Html.Partial("FeaturedMeals", Model)
-<hr style="margin-bottom: 10px;"/>
+<hr style="margin-bottom: 10px;" />
 @Html.Partial("MealPlans", Model)
-
-<div id="modalDiv"></div>
-
-<script>
-    function showSelectMealModal(id) {
-        $('#loading').show();
-        $('#modalDiv').load('../Home/SelectMealPartial?id=' + id, function () {
-            $('#selectMealModal').modal('show');
-            $('#loading').hide();
-        });
-    }
-</script>

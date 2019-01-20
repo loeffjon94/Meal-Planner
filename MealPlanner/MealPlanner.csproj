@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Apis" Version="1.37.0" />
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.37.0.1369" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.1" />
@@ -19,6 +23,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
