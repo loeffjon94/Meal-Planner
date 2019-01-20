@@ -88,14 +88,6 @@ h6 {
   .selected td a {
     color: white; }
 
-#bodyContent {
-  padding: 50px; }
-
-@media screen and (max-width: 767px) {
-  #bodyContent {
-    padding: 20px;
-    padding-top: 50px; } }
-
 /*Navbar*/
 .slideout-menu {
   position: fixed;
@@ -184,9 +176,15 @@ h6 {
             opacity: 1; }
 
 #panel {
+  padding: 50px;
   -webkit-box-shadow: 0px 0px 40px 10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 0px 40px 10px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 0px 40px 10px rgba(0, 0, 0, 0.5); }
+
+@media screen and (max-width: 780px) {
+  #panel {
+    padding: 20px;
+    padding-top: 50px; } }
 
 @media screen and (min-width: 780px) {
   .slideout-panel {
