@@ -23,35 +23,26 @@ namespace MealPlanner.Services
             _connectionString = connectionString;
         }
 
-        public async Task<Recipe> GetFullMeal(int? id)
-        {
-            return await _context.Recipes
+        public async Task<Recipe> GetFullMeal(int? id) => await _context.Recipes
                 .Include(r => r.Image)
                 .Include(r => r.RecipeCategory)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
                 .Include(r => r.RecipeDetails).ThenInclude(a => a.Recipe)
                 .SingleOrDefaultAsync(m => m.Id == id);
-        }
 
-        public async Task<List<Recipe>> GetFeaturedMeals()
-        {
-            return await _context.Recipes
+        public async Task<List<Recipe>> GetFeaturedMeals() => await _context.Recipes
                 .Include(x => x.Image)
                 .AsNoTracking()
                 .OrderBy(x => x.LastViewed)
                 .Take(5)
                 .ToListAsync();
-        }
 
-        public async Task<List<MealPlan>> GetMealPlans()
-        {
-            return await _context.MealPlans
+        public async Task<List<MealPlan>> GetMealPlans() => await _context.MealPlans
                 .AsNoTracking()
                 .Include(x => x.Recipe).ThenInclude(y => y.Image)
                 .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
                 .ToListAsync();
-        }
 
         public async Task<List<MealPlan>> GetShoppingMealsWithIngredients()
         {
@@ -89,9 +80,7 @@ namespace MealPlanner.Services
         public async Task UpdateMealPlan(MealPlan plan)
         {
             using (var conn = new SqlConnection(_connectionString))
-            {
                 conn.Execute("DELETE FROM SideRelationships WHERE MealPlanId = @mealPlanId", new { mealPlanId = plan.Id });
-            }
 
             var sides = plan.SideRecipes.ToArray();
             for (int i = 0; i < sides.Length; i++)
@@ -106,19 +95,18 @@ namespace MealPlanner.Services
 
         public List<RecipeDetail> GetIngredients(List<MealPlan> meals)
         {
-            var mealItems = meals.Where(x => !x.ExcludeFromShoppingList).SelectMany(x => x.Recipe.RecipeDetails).ToList();
+            List<RecipeDetail> mealItems = meals.Where(x => !x.ExcludeFromShoppingList).SelectMany(x => x.Recipe.RecipeDetails).ToList();
             mealItems.AddRange(meals.SelectMany(x => x.SideRecipes.Where(y => !y.ExcludeFromShoppingList).SelectMany(y => y.Recipe.RecipeDetails)));
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
         }
 
-        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
-        {
-            return await _context.Recipes
+        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId) => await _context.Recipes
                 .AsNoTracking()
-                .Where(x => x.RecipeDetails.Count() > 0 && 
-                            x.RecipeDetails.Where(y => y.IngredientId == ingredientId).Count() > 0 && 
+                .Where(x => x.RecipeDetails.Count() > 0 &&
+                            x.RecipeDetails.Where(y => y.IngredientId == ingredientId).Count() > 0 &&
                             x.RecipeDetails.Where(y => y.UnitId == unitId).Count() > 0 &&
-                            (x.MealPlans.Count() > 0 || x.SidePlans.Count() > 0))
+                            (x.MealPlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0 ||
+                                x.SidePlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0))
                 .Select(x => new RecipeDrillInModel
                 {
                     RecipeId = x.Id,
@@ -127,6 +115,5 @@ namespace MealPlanner.Services
                     UnitName = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Select(y => y.Unit.Name).FirstOrDefault()
                 })
                 .ToListAsync();
-        }
     }
 }
