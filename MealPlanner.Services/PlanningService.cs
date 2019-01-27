@@ -8,48 +8,55 @@ namespace MealPlanner.Services
 {
     public class PlanningService
     {
-        private MealPlannerContext _context;
+        private DbContextOptions<MealPlannerContext> _dbOptions;
 
-        public PlanningService(MealPlannerContext context)
+        public PlanningService(DbContextOptions<MealPlannerContext> dbOptions)
         {
-            _context = context;
+            _dbOptions = dbOptions;
         }
 
         public async Task<MealPlan> GetPlan(int? id)
         {
-            return await _context.MealPlans
-                .AsNoTracking()
-                .Where(x => x.Id == id)
-                .Include(x => x.SideRecipes)
-                .ThenInclude(y => y.Recipe)
-                .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.MealPlans
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Include(x => x.SideRecipes)
+                    .ThenInclude(y => y.Recipe)
+                    .SingleOrDefaultAsync();
         }
 
         public async Task ClearAllPlans()
         {
-            var mealPlans = await _context.MealPlans.Include(x => x.SideRecipes).ToArrayAsync();
-            for (int i = 0; i < mealPlans.Length; i++)
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
-                var sideArray = mealPlans[i].SideRecipes.ToArray();
-                for (int j = 0; i < sideArray.Length; j++)
-                    mealPlans[i].SideRecipes.Remove(sideArray[j]);
-                
-                _context.MealPlans.Remove(mealPlans[i]);
+                var mealPlans = await context.MealPlans.Include(x => x.SideRecipes).ToArrayAsync();
+                for (int i = 0; i < mealPlans.Length; i++)
+                {
+                    var sideArray = mealPlans[i].SideRecipes.ToArray();
+                    for (int j = 0; i < sideArray.Length; j++)
+                        mealPlans[i].SideRecipes.Remove(sideArray[j]);
+
+                    context.MealPlans.Remove(mealPlans[i]);
+                }
+                await context.SaveChangesAsync();
             }
-            await _context.SaveChangesAsync();
         }
 
         public async Task RemovePlan(int id)
         {
-            var p = await _context.MealPlans
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var p = await context.MealPlans
                     .Where(x => x.Id == id)
                     .Include(x => x.SideRecipes)
                     .SingleOrDefaultAsync();
-            var sideArray = p.SideRecipes.ToArray();
-            for (int i = 0; i < sideArray.Length; i++)
-                p.SideRecipes.Remove(sideArray[i]);
-            
-            _context.MealPlans.Remove(p);
+                var sideArray = p.SideRecipes.ToArray();
+                for (int i = 0; i < sideArray.Length; i++)
+                    p.SideRecipes.Remove(sideArray[i]);
+
+                context.MealPlans.Remove(p);
+            }
         }
     }
 }

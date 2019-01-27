@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using MealPlanner.Data.Contexts;
+using MealPlanner.Services;
 
 namespace MealPlanner
 {
@@ -21,6 +22,11 @@ namespace MealPlanner
         {
             services.AddDbContext<MealPlannerContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MealPlannerContext")));
+
+            services.AddScoped<IngredientService>();
+            services.AddScoped<MealsService>();
+            services.AddScoped<PlanningService>();
+            services.AddScoped<RecipeService>();
 
             services.AddMvc();
         }

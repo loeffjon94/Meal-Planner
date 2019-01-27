@@ -14,9 +14,10 @@ namespace MealPlanner.Controllers
     {
         private IngredientService _ingredientService;
 
-        public IngredientsController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        public IngredientsController(MealPlannerContext context, IConfiguration configuration,
+            IngredientService ingredientService) : base(context, configuration)
         {
-            _ingredientService = new IngredientService(context);
+            _ingredientService = ingredientService;
         }
 
         // GET: Ingredients

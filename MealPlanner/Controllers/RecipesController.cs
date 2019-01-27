@@ -16,8 +16,13 @@ namespace MealPlanner.Controllers
 {
     public class RecipesController : BaseController
     {
-        public RecipesController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        private RecipeService _recipeService;
+        private MealsService _mealsService;
+        public RecipesController(MealPlannerContext context, IConfiguration configuration,
+            RecipeService recipeService, MealsService mealsService) : base(context, configuration)
         {
+            _recipeService = recipeService;
+            _mealsService = mealsService;
         }
 
         // GET: Recipes

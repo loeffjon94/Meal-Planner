@@ -4,6 +4,7 @@ using MealPlanner.Infrastructure.Extensions;
 using MealPlanner.Models.Entities;
 using MealPlanner.Models.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -14,55 +15,71 @@ namespace MealPlanner.Services
 {
     public class MealsService
     {
-        private MealPlannerContext _context;
-        private string _connectionString;
+        private IConfiguration _confg;
+        private DbContextOptions<MealPlannerContext> _dbOptions;
 
-        public MealsService(MealPlannerContext context, string connectionString)
+        public MealsService(IConfiguration config, DbContextOptions<MealPlannerContext> dbOptions)
         {
-            _context = context;
-            _connectionString = connectionString;
+            _confg = config;
+            _dbOptions = dbOptions;
         }
 
-        public async Task<Recipe> GetFullMeal(int? id) => await _context.Recipes
-                .Include(r => r.Image)
-                .Include(r => r.RecipeCategory)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
-                .Include(r => r.RecipeDetails).ThenInclude(a => a.Recipe)
-                .SingleOrDefaultAsync(m => m.Id == id);
+        public async Task<Recipe> GetFullMeal(int? id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Recipes
+                    .Include(r => r.Image)
+                    .Include(r => r.RecipeCategory)
+                    .Include(r => r.RecipeDetails).ThenInclude(a => a.Ingredient)
+                    .Include(r => r.RecipeDetails).ThenInclude(a => a.Unit)
+                    .Include(r => r.RecipeDetails).ThenInclude(a => a.Recipe)
+                    .SingleOrDefaultAsync(m => m.Id == id);
+        }
 
-        public async Task<List<Recipe>> GetFeaturedMeals() => await _context.Recipes
-                .Include(x => x.Image)
-                .AsNoTracking()
-                .OrderBy(x => x.LastViewed)
-                .Take(5)
-                .ToListAsync();
+        public async Task<List<Recipe>> GetFeaturedMeals()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Recipes
+                    .Include(x => x.Image)
+                    .AsNoTracking()
+                    .OrderBy(x => x.LastViewed)
+                    .Take(5)
+                    .ToListAsync();
+        }
 
-        public async Task<List<MealPlan>> GetMealPlans() => await _context.MealPlans
-                .AsNoTracking()
-                .Include(x => x.Recipe).ThenInclude(y => y.Image)
-                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
-                .ToListAsync();
+        public async Task<List<MealPlan>> GetMealPlans()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.MealPlans
+                    .AsNoTracking()
+                    .Include(x => x.Recipe).ThenInclude(y => y.Image)
+                    .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
+                    .ToListAsync();
+        }
 
         public async Task<List<MealPlan>> GetShoppingMealsWithIngredients()
         {
             var beginningOfWeek = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
-            return await _context.MealPlans
-                .AsNoTracking()
-                .Include(x => x.Recipe).ThenInclude(y => y.Image)
-                .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
-                .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
-                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Ingredient)
-                .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Unit)
-                .ToListAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.MealPlans
+                    .AsNoTracking()
+                    .Include(x => x.Recipe).ThenInclude(y => y.Image)
+                    .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
+                    .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
+                    .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Ingredient)
+                    .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe).ThenInclude(z => z.RecipeDetails).ThenInclude(a => a.Unit)
+                    .ToListAsync();
         }
 
         public async Task UpdateRecipe(int recipeId)
         {
-            var recipe = await _context.Recipes.SingleOrDefaultAsync(r => r.Id == recipeId);
-            recipe.LastViewed = DateTime.Now;
-            _context.Update(recipe);
-            await _context.SaveChangesAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var recipe = await context.Recipes.SingleOrDefaultAsync(r => r.Id == recipeId);
+                recipe.LastViewed = DateTime.Now;
+                context.Update(recipe);
+                await context.SaveChangesAsync();
+            }
         }
 
         public void AddMealPlan(MealPlan plan)
@@ -74,12 +91,13 @@ namespace MealPlanner.Services
                     plan.SideRecipes.Remove(sides[i]);
             }
 
-            _context.MealPlans.Add(plan);
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                context.MealPlans.Add(plan);
         }
 
         public async Task UpdateMealPlan(MealPlan plan)
         {
-            using (var conn = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(_confg.GetConnectionString("MealPlannerContext")))
                 conn.Execute("DELETE FROM SideRelationships WHERE MealPlanId = @mealPlanId", new { mealPlanId = plan.Id });
 
             var sides = plan.SideRecipes.ToArray();
@@ -89,8 +107,11 @@ namespace MealPlanner.Services
                     plan.SideRecipes.Remove(sides[i]);
             }
 
-            _context.Update(plan);
-            await _context.SaveChangesAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                context.Update(plan);
+                await context.SaveChangesAsync();
+            }
         }
 
         public List<RecipeDetail> GetIngredients(List<MealPlan> meals)
@@ -100,20 +121,26 @@ namespace MealPlanner.Services
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
         }
 
-        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId) => await _context.Recipes
-                .AsNoTracking()
-                .Where(x => x.RecipeDetails.Count() > 0 &&
-                            x.RecipeDetails.Where(y => y.IngredientId == ingredientId).Count() > 0 &&
-                            x.RecipeDetails.Where(y => y.UnitId == unitId).Count() > 0 &&
-                            (x.MealPlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0 ||
+        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.Recipes
+                    .AsNoTracking()
+                    .Where(x => x.RecipeDetails.Count() > 0 &&
+                                x.RecipeDetails.Where(y => y.IngredientId == ingredientId && 
+                                                           y.UnitId == unitId).Count() > 0 &&
+                                (x.MealPlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0 ||
                                 x.SidePlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0))
-                .Select(x => new RecipeDrillInModel
-                {
-                    RecipeId = x.Id,
-                    RecipeName = x.Name,
-                    TotalQuantity = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Sum(y => y.Quantity),
-                    UnitName = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Select(y => y.Unit.Name).FirstOrDefault()
-                })
-                .ToListAsync();
+                    .Select(x => new RecipeDrillInModel
+                    {
+                        RecipeId = x.Id,
+                        RecipeName = x.Name,
+                        TotalQuantity = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Sum(y => y.Quantity),
+                        UnitName = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Select(y => y.Unit.Name).FirstOrDefault()
+                    })
+                    .ToListAsync();
+            }
+        }
     }
 }

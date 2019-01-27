@@ -8,8 +8,14 @@ namespace MealPlanner.Controllers
 {
     public class ShoppingListController : BaseController
     {
-        public ShoppingListController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        private MealsService _mealsService;
+        private RecipeService _recipeService;
+
+        public ShoppingListController(MealPlannerContext context, IConfiguration configuration,
+            MealsService mealsService, RecipeService recipeService) : base(context, configuration)
         {
+            _mealsService = mealsService;
+            _recipeService = recipeService;
         }
 
         public async Task<IActionResult> NewShoppingList()

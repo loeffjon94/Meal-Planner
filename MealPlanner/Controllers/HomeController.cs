@@ -16,10 +16,13 @@ namespace MealPlanner.Controllers
     public class HomeController : BaseController
     {
         private PlanningService _planningService;
+        private MealsService _mealsService;
 
-        public HomeController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        public HomeController(MealPlannerContext context, IConfiguration configuration,
+            PlanningService planningService, MealsService mealsService) : base(context, configuration)
         {
-            _planningService = new PlanningService(context);
+            _planningService = planningService;
+            _mealsService = mealsService;
         }
 
         public IActionResult Index()

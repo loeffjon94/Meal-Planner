@@ -11,37 +11,40 @@ namespace MealPlanner.Services
 {
     public class RecipeService
     {
-        private MealPlannerContext _context;
+        private DbContextOptions<MealPlannerContext> _dbOptions;
         private IConfiguration _configuration;
 
-        public RecipeService(MealPlannerContext context, IConfiguration configuration)
+        public RecipeService(DbContextOptions<MealPlannerContext> dbOptions, IConfiguration configuration)
         {
             _configuration = configuration;
-            _context = context;
+            _dbOptions = dbOptions;
         }
 
         public async Task<string> GetRecipeName(int id)
         {
-            return await _context.Recipes
-                    .AsNoTracking()
-                    .Where(x => x.Id == id)
-                    .Select(x => x.Name)
-                    .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Recipes
+                        .AsNoTracking()
+                        .Where(x => x.Id == id)
+                        .Select(x => x.Name)
+                        .SingleOrDefaultAsync();
         }
 
         public async Task<Recipe> GetRecipe(int id)
         {
-            return await _context.Recipes
-                .Where(x => x.Id == id)
-                .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Recipes
+                    .Where(x => x.Id == id)
+                    .SingleOrDefaultAsync();
         }
 
         public async Task<Image> GetRecipeDisplayImage(int id)
         {
-            return await _context.Recipes
-                .Where(x => x.Id == id)
-                .Select(x => x.Image)
-                .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Recipes
+                    .Where(x => x.Id == id)
+                    .Select(x => x.Image)
+                    .SingleOrDefaultAsync();
         }
 
         public string GetImage(string query)
@@ -64,22 +67,24 @@ namespace MealPlanner.Services
 
         public async Task<int?> GetIngredientId(int recipeDetailId)
         {
-            return await _context
-                .RecipeDetails
-                .AsNoTracking()
-                .Where(x => x.Id == recipeDetailId)
-                .Select(x => x.IngredientId)
-                .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context
+                    .RecipeDetails
+                    .AsNoTracking()
+                    .Where(x => x.Id == recipeDetailId)
+                    .Select(x => x.IngredientId)
+                    .SingleOrDefaultAsync();
         }
 
         public async Task<int?> GetUnitId(int recipeDetailId)
         {
-            return await _context
-                .RecipeDetails
-                .AsNoTracking()
-                .Where(x => x.Id == recipeDetailId)
-                .Select(x => x.UnitId)
-                .SingleOrDefaultAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context
+                    .RecipeDetails
+                    .AsNoTracking()
+                    .Where(x => x.Id == recipeDetailId)
+                    .Select(x => x.UnitId)
+                    .SingleOrDefaultAsync();
         }
     }
 }
