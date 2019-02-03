@@ -122,6 +122,19 @@ namespace MealPlanner.Services
             }
         }
 
+        public async Task ClearAllShoppingItems()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var checkedItems = await context.ShoppingListItems
+                    .ToArrayAsync();
+
+                for (int i = 0; i < checkedItems.Length; i++)
+                    context.ShoppingListItems.Remove(checkedItems[i]);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<bool> RemoveItem(int id)
         {
             try
@@ -137,6 +150,23 @@ namespace MealPlanner.Services
             catch
             {
                 return false;
+            }
+        }
+
+        private async Task<int> GetMaxItemOrder()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.ShoppingListItems.Select(x => x.Order).DefaultIfEmpty(0).MaxAsync();
+        }
+
+        public async Task CreateItem(ShoppingListItem item)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                if (item.Order == 0)
+                    item.Order = (await GetMaxItemOrder()) + 1;
+                context.ShoppingListItems.Add(item);
+                await context.SaveChangesAsync();
             }
         }
     }

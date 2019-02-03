@@ -1,14 +1,14 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/site.css",
-    "inputFile": "wwwroot/css/site.scss"
-  },
-  {
     "outputFile": "wwwroot/lib/hamburgers/hamburgers.css",
     "inputFile": "wwwroot/lib/hamburgers/hamburgers.scss"
   },
   {
     "outputFile": "wwwroot/css/Checkbox.css",
     "inputFile": "wwwroot/css/Checkbox.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/site.css",
+    "inputFile": "wwwroot/css/site.scss"
   }
 ]

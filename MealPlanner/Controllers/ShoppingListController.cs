@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Services;
+using MealPlanner.Models.Entities;
 
 namespace MealPlanner.Controllers
 {
@@ -53,10 +54,28 @@ namespace MealPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> ClearAll()
+        {
+            await _shoppingService.ClearAllShoppingItems();
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<JsonResult> RemoveShoppingItem(int id)
         {
             var result = await _shoppingService.RemoveItem(id);
             return Json(new { success = result });
+        }
+
+        public IActionResult AddItem()
+        {
+            return PartialView(new ShoppingListItem());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddItem(ShoppingListItem item)
+        {
+            await _shoppingService.CreateItem(item);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

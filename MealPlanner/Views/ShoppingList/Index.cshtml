@@ -4,7 +4,8 @@
 <h2>Grocery List</h2>
 <div class="btn-group">
     <a asp-action="AddCurrentMealPlan" class="btn btn-sm btn-primary">Add Meal Plan <i class="fas fa-plus"></i></a>
-    <a asp-action="ClearAllChecked" class="btn btn-sm btn-danger">Clear all Checked <i class="fas fa-trash"></i></a>
+    <a asp-action="ClearAllChecked" class="btn btn-sm btn-warning">Clear all Checked <i class="fas fa-eraser"></i></a>
+    <a asp-action="ClearAll" onclick="return confirm('Are you sure you want to clear the whole list?')" class="btn btn-sm btn-danger">Clear All <i class="fas fa-trash"></i></a>
 </div>
 <hr />
 @foreach (var item in Model)
@@ -20,6 +21,10 @@
         </h5>
     </div>
 }
+
+<a href="javascript:showAddShoppingItemModal()" class="float">
+    <i class="fas fa-plus my-float"></i>
+</a>
 
 @section Scripts {
     <script>
@@ -50,6 +55,14 @@
                 error: function () {
                     alert("Error: the item may not have been checked.")
                 }
+            });
+        }
+
+        function showAddShoppingItemModal() {
+            $('#loading').show();
+            $('#modalDiv').load('/ShoppingList/AddItem', function () {
+                $('#loading').hide();
+                $('#addShoppingItemModal').modal('show');
             });
         }
 
