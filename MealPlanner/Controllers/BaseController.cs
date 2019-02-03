@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MealPlanner.Data.Contexts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MealPlanner.Controllers
 {
+    [Authorize]
     public class BaseController : Controller
     {
         protected readonly MealPlannerContext _context;
