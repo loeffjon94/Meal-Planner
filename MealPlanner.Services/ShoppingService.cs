@@ -1,13 +1,24 @@
-﻿using MealPlanner.Models.Entities;
+﻿using MealPlanner.Data.Contexts;
+using MealPlanner.Models.Entities;
 using MealPlanner.Models.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MealPlanner.Services
 {
-    public static class ShoppingService
+    public class ShoppingService
     {
-        public static List<ShoppingItem> GenerateShoppingList(this List<RecipeDetail> recipeDetails)
+        private MealsService _mealsService;
+        private DbContextOptions<MealPlannerContext> _dbOptions;
+        public ShoppingService(MealsService mealsService, DbContextOptions<MealPlannerContext> dbOptions)
+        {
+            _mealsService = mealsService;
+            _dbOptions = dbOptions;
+        }
+
+        public List<ShoppingItem> GenerateShoppingList(List<RecipeDetail> recipeDetails)
         {
             return recipeDetails.GroupBy(x => new { x.IngredientId, x.UnitId }).Select(x => new ShoppingItem
             {
@@ -15,8 +26,118 @@ namespace MealPlanner.Services
                 IngredientId = x.Where(y => y.IngredientId.HasValue).Select(y => y.IngredientId.Value).FirstOrDefault(),
                 IngredientName = x.Where(y => y.IngredientId.HasValue).Select(y => y.Ingredient.Name).FirstOrDefault(),
                 Quantity = x.Where(y => y.Quantity.HasValue).Sum(y => y.Quantity.Value),
-                Unit = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Name).FirstOrDefault()
+                Unit = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Name).FirstOrDefault(),
+                UnitId = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Id).FirstOrDefault()
             }).ToList();
+        }
+
+        public async Task AddCurrentMealPlan()
+        {
+            var meals = await _mealsService.GetShoppingMealsWithIngredients();
+            var recipeItems = _mealsService.GetIngredients(meals);
+            var list = GenerateShoppingList(recipeItems);
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                foreach (ShoppingItem item in list)
+                {
+                    context.ShoppingListItems.Add(new ShoppingListItem
+                    {
+                        Name = item.IngredientName,
+                        Quantity = item.Quantity,
+                        Unit = item.Unit,
+                        IngredientId = item.IngredientId,
+                        UnitId = item.UnitId,
+                        Order = 0
+                    });
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<ShoppingListItem>> GetShoppingList()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.ShoppingListItems
+                    .AsNoTracking()
+                    .ToListAsync();
+        }
+
+        public async Task<int?> GetShoppingItemIngredientId(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.ShoppingListItems
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Select(x => x.IngredientId)
+                    .SingleOrDefaultAsync();
+            }
+        }
+
+        public async Task<int?> GetShoppingItemUnitId(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.ShoppingListItems
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Select(x => x.UnitId)
+                    .SingleOrDefaultAsync();
+            }
+        }
+
+        public async Task<bool> CheckShoppingListItem(int id, bool checkedVal)
+        {
+            try
+            {
+                using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                {
+                    var item = await context.ShoppingListItems
+                        .AsNoTracking()
+                        .Where(x => x.Id == id)
+                        .SingleOrDefaultAsync();
+                    item.Checked = checkedVal;
+                    context.ShoppingListItems.Update(item);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task ClearAllCheckedShoppingItems()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var checkedItems = await context.ShoppingListItems
+                    .Where(x => x.Checked)
+                    .ToArrayAsync();
+
+                for (int i = 0; i < checkedItems.Length; i++)
+                    context.ShoppingListItems.Remove(checkedItems[i]);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> RemoveItem(int id)
+        {
+            try
+            {
+                using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                {
+                    var item = await context.ShoppingListItems.FindAsync(id);
+                    context.ShoppingListItems.Remove(item);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

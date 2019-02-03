@@ -27,6 +27,7 @@ namespace MealPlanner
             services.AddScoped<MealsService>();
             services.AddScoped<PlanningService>();
             services.AddScoped<RecipeService>();
+            services.AddScoped<ShoppingService>();
 
             services.AddMvc();
         }
