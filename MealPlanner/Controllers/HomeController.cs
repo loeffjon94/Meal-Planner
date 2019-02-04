@@ -67,9 +67,8 @@ namespace MealPlanner.Controllers
                 if (plan.Id > 0)
                     await _mealsService.UpdateMealPlan(plan);
                 else
-                    _mealsService.AddMealPlan(plan);
+                    await _mealsService.AddMealPlan(plan);
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

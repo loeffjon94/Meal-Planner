@@ -56,6 +56,7 @@ namespace MealPlanner.Services
                     p.SideRecipes.Remove(sideArray[i]);
 
                 context.MealPlans.Remove(p);
+                await context.SaveChangesAsync();
             }
         }
     }

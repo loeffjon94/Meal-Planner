@@ -82,7 +82,7 @@ namespace MealPlanner.Services
             }
         }
 
-        public void AddMealPlan(MealPlan plan)
+        public async Task AddMealPlan(MealPlan plan)
         {
             var sides = plan.SideRecipes.ToArray();
             for (int i = 0; i < sides.Length; i++)
@@ -92,7 +92,10 @@ namespace MealPlanner.Services
             }
 
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
                 context.MealPlans.Add(plan);
+                await context.SaveChangesAsync();
+            }
         }
 
         public async Task UpdateMealPlan(MealPlan plan)
