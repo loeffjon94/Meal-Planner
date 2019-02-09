@@ -16,7 +16,7 @@
         <li class="item" data-id="@item.Id">
             <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
             <label for="cb@(item.Id)" class="check-box"></label>
-            <input maxlength="100" autofocus="autofocus" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
+            <input maxlength="100" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
             <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
             @if (!string.IsNullOrEmpty(item.Notes))
             {

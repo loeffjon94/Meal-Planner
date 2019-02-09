@@ -52,6 +52,22 @@ function UpdateShoppingItemEntry(id, value) {
     });
 }
 
+function UpdateOrder(id, previousId) {
+    $.ajax({
+        type: "POST",
+        url: '/ShoppingList/UpdateShoppingItemOrder',
+        data: { id: id, previousId: previousId },
+        success: function (data) {
+            if (!data.success) {
+                alert("Error: the item may not updated correctly.");
+            }
+        },
+        error: function () {
+            alert("Error: the item may not updated correctly.");
+        }
+    });
+}
+
 $(document).ready(function () {
     $('.shoppingItemCheck').change(function () {
         var id = $(this).data('id');

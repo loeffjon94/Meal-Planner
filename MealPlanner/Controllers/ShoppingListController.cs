@@ -81,5 +81,11 @@ namespace MealPlanner.Controllers
         {
             return Json(await _shoppingService.GetNumberOfShoppingListItems());
         }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateShoppingItemOrder(int id, int previousId)
+        {
+            return Json(new { success = await _shoppingService.UpdateOrder(id, previousId) });
+        }
     }
 }

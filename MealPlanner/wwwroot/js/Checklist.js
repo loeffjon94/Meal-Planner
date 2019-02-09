@@ -16,6 +16,7 @@ function AppendNewLine(id) {
         $('.ShoppingList').find('.item:last').find('check-textbox').focus();
     });
     InitTextBoxUpdate();
+    InitReorder();
 }
 
 function AddItem() {
@@ -31,6 +32,15 @@ function RemoveCheck(id) {
     RemoveItem(id);
 }
 
+function InitReorder() {
+    $('.ShoppingList').sortable().bind('sortupdate', function (event, ui) {
+        var id = ui.item.data('id');
+        var previousId = ui.item.prev().data('id');
+        UpdateOrder(id, previousId);
+    });
+}
+
 $(document).ready(function () {
     InitTextBoxUpdate();
+    InitReorder();
 });

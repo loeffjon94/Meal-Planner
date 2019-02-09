@@ -33,7 +33,12 @@ namespace MealPlanner.Services
 
         public async Task AddCurrentMealPlan()
         {
-            var meals = await _mealsService.GetShoppingMealsWithIngredients();
+            var mealsTask = _mealsService.GetShoppingMealsWithIngredients();
+            var orderTask = GetMaxItemOrder();
+            await Task.WhenAll(mealsTask, orderTask);
+
+            var meals = mealsTask.Result;
+            var order = orderTask.Result + 1;
             var recipeItems = _mealsService.GetIngredients(meals);
             var list = GenerateShoppingList(recipeItems);
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
@@ -43,9 +48,10 @@ namespace MealPlanner.Services
                     context.ShoppingListItems.Add(new ShoppingListItem
                     {
                         Name = $"{item.IngredientName} ({item.Quantity} {item.Unit})",
-                        Order = 0,
+                        Order = order,
                         Notes = string.Join('\n', await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
                     });
+                    order++;
                 }
                 await context.SaveChangesAsync();
             }
@@ -175,6 +181,60 @@ namespace MealPlanner.Services
                     item.Name = value;
                     context.Update(item);
                     await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task<ShoppingListItem> GetShoppingListItem(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.ShoppingListItems
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .SingleOrDefaultAsync();
+        }
+
+        private async Task IncreaseItemOrders(int startOrder, int excludeId)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var itemsToUpdate = await context.ShoppingListItems
+                    .Where(x => x.Order >= startOrder && 
+                                x.Id != excludeId)
+                    .ToListAsync();
+
+                foreach (var item in itemsToUpdate)
+                {
+                    item.Order++;
+                    context.Update(item);
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> UpdateOrder(int id, int previousId)
+        {
+            try
+            {
+                using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                {
+                    var shoppingItemTask = GetShoppingListItem(id);
+                    var previousShoppingItemTask = GetShoppingListItem(previousId);
+                    await Task.WhenAll(shoppingItemTask, previousShoppingItemTask);
+
+                    var item = shoppingItemTask.Result;
+                    var previousItem = previousShoppingItemTask.Result;
+
+                    item.Order = (previousItem != null ? previousItem.Order : 0) + 1;
+                    context.Update(item);
+                    var saveTask = context.SaveChangesAsync();
+                    var increaseOrderTask = IncreaseItemOrders(item.Order, item.Id);
+                    await Task.WhenAll(saveTask, increaseOrderTask);
                     return true;
                 }
             }
