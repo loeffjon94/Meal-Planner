@@ -9,14 +9,15 @@ function AppendNewLine(id) {
     $(".ShoppingList").append('<li class="item" style="display:none;" data-id="' + id + '">' +
         '    <input type="checkbox" class="shoppingItemCheck" data-id="' + id + '" id="cb' + id + '">' +
         '    <label for="cb' + id + '" class="check-box"></label>' +
-        '    <input maxlength="100" autofocus="autofocus" placeholder="Click to edit" value="" class="check-textbox">' +
+        '    <input maxlength="100" placeholder="Click to edit" value="" class="check-textbox">' +
         '    <a href="javascript:RemoveCheck(' + id + ')"><i class="fas fa-times text-danger"></i></a>' +
         '</li>');
     $('.ShoppingList').find('.item:last').slideDown(200, function () {
-        $('.ShoppingList').find('.item:last').find('check-textbox').focus();
+        $('.ShoppingList').find('.item:last').find('.check-textbox').focus();
     });
     InitTextBoxUpdate();
     InitReorder();
+    InitCheck();
 }
 
 function AddItem() {

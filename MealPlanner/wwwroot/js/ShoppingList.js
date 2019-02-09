@@ -68,7 +68,7 @@ function UpdateOrder(id, previousId) {
     });
 }
 
-$(document).ready(function () {
+function InitCheck() {
     $('.shoppingItemCheck').change(function () {
         var id = $(this).data('id');
         $.ajax({
@@ -85,4 +85,8 @@ $(document).ready(function () {
             }
         });
     });
+}
+
+$(document).ready(function () {
+    InitCheck();
 });
