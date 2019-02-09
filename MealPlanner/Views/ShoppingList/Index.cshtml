@@ -18,7 +18,11 @@
             <label for="cb@(item.Id)" class="check-box"></label>
             <input maxlength="100" autofocus="autofocus" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
             <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
-            <span class="notesSection">@item.Notes</span>
+            @if (!string.IsNullOrEmpty(item.Notes))
+            {
+                <br />
+                <span class="notesSection">@item.Notes</span>
+            }
         </li>
     }
 </ul>
@@ -27,29 +31,3 @@
     <script src="~/js/ShoppingList.js" asp-append-version="true"></script>
     <script src="~/js/Checklist.js" asp-append-version="true"></script>
 }
-
-
-@*@foreach (var item in Model)
-        {
-            <div class="row checkContainer" data-id="@item.Id" style="border-bottom:solid 1px #ccc;">
-                <div class="row">
-                    <h5 class="col-sm-12">
-                        <span class="pull-left">
-                            <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
-                            <label for="cb@(item.Id)" class="check-box"></label>
-                        </span>
-                        <span class="pull-left" style="margin-left: 10px; margin-top: 3px;">@item.Name</span>
-                        <span class="pull-right">@item.Quantity @item.Unit <a href="javascript:removeItem(@item.Id)" class="text-danger"><i class="fas fa-times"></i></a></span>
-                    </h5>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <p style="padding-left: 40px;">@item.Notes</p>
-                    </div>
-                </div>
-            </div>
-        }
-
-    <a href="javascript:showAddShoppingItemModal()" class="float">
-        <i class="fas fa-plus my-float"></i>
-    </a>*@

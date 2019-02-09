@@ -1,9 +1,10 @@
 ﻿ul.ShoppingList {
-  padding: 0; }
+  padding: 0;
+  width: 100%; }
   ul.ShoppingList li {
     list-style: none;
     margin-top: 5px;
-    width: 500px; }
+    width: 100%; }
   ul.ShoppingList li {
     margin-left: 5px; }
 
@@ -13,7 +14,7 @@
 /***** Text box *****/
 input {
   display: inline-block;
-  width: 400px;
+  width: 85%;
   height: 25px;
   resize: none;
   box-sizing: border-box; }

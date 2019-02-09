@@ -2,11 +2,12 @@
 
 ul.ShoppingList {
     padding: 0;
+    width: 100%;
 
     li {
         list-style: none;
         margin-top: 5px;
-        width: 500px;
+        width: 100%;
     }
 
     li {
@@ -22,7 +23,7 @@ ul.ShoppingList {
 
 input {
     display: inline-block;
-    width: 400px;
+    width: 85%;
     height: 25px;
     resize: none;
     box-sizing: border-box;
