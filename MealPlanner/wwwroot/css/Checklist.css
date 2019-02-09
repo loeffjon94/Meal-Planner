@@ -17,7 +17,8 @@ input {
   width: 85%;
   height: 25px;
   resize: none;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  font-weight: 600; }
 
 input:focus, input:hover {
   border: 1px dashed lightgrey; }

@@ -21,7 +21,7 @@
             @if (!string.IsNullOrEmpty(item.Notes))
             {
                 <br />
-                <span class="notesSection">@item.Notes</span>
+                <p class="notesSection">@Html.Raw(item.Notes)</p>
             }
         </li>
     }

@@ -49,7 +49,7 @@ namespace MealPlanner.Services
                     {
                         Name = $"{item.IngredientName} ({item.Quantity} {item.Unit})",
                         Order = order,
-                        Notes = string.Join('\n', await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
+                        Notes = string.Join("<br/>", await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
                     });
                     order++;
                 }
