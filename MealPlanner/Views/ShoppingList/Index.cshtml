@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<MealPlanner.Models.Entities.ShoppingListItem>
 
 <link href="~/css/Checkbox.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/Checklist.min.css" rel="stylesheet" asp-append-version="true" />
 <h2>Grocery List</h2>
 <div class="btn-group">
     <a asp-action="AddCurrentMealPlan" class="btn btn-sm btn-primary">Add Meal Plan <i class="fas fa-plus"></i></a>
@@ -8,81 +9,47 @@
     <a asp-action="ClearAll" onclick="return confirm('Are you sure you want to clear the whole list?')" class="btn btn-sm btn-danger">Clear All <i class="fas fa-trash"></i></a>
 </div>
 <hr />
-@foreach (var item in Model)
-{
-    <div class="row checkContainer" data-id="@item.Id" style="border-bottom:solid 1px #ccc;">
-        <h5 class="col-sm-12">
-            <span class="pull-left">
-                <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
-                <label for="cb@(item.Id)" class="check-box"></label>
-            </span>
-            <span class="pull-left" style="margin-left: 10px;">@item.Name</span>
-            <span class="pull-right">@item.Quantity @item.Unit <a href="javascript:removeItem(@item.Id)" class="text-danger"><i class="fas fa-times"></i></a></span>
-        </h5>
-    </div>
-}
 
-<a href="javascript:showAddShoppingItemModal()" class="float">
-    <i class="fas fa-plus my-float"></i>
-</a>
-
+<ul class="ShoppingList">
+    @foreach (var item in Model.OrderBy(x => x.Order))
+    {
+        <li class="item" data-id="@item.Id">
+            <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
+            <label for="cb@(item.Id)" class="check-box"></label>
+            <input maxlength="100" autofocus="autofocus" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
+            <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
+            <span class="notesSection">@item.Notes</span>
+        </li>
+    }
+</ul>
+<a class="add" href="javascript:AddItem()"><i class="fas fa-plus text-success"></i> Add item</a>
 @section Scripts {
-    <script>
-        function drillIntoItem(id) {
-            if ($('#drillIn' + id).length) {
-                $('#drillIn' + id).remove();
-            }
-            else {
-                $('#row' + id).after('<tr><td colspan="4" id="drillIn' + id + '"></td></tr>');
-                $('#drillIn' + id).load('/ShoppingList/RecipeDrillIn/' + id);
-            }
-        }
-
-        function removeItem(id) {
-            $.ajax({
-                type: "POST",
-                url: '/ShoppingList/RemoveShoppingItem',
-                data: { id: id },
-                success: function (data) {
-                    if (!data.success) {
-                        alert("Error: the item may not have been checked.")
-                    }
-                    else {
-                        var container = $(".checkContainer[data-id='" + id + "']");
-                        container.remove();
-                    }
-                },
-                error: function () {
-                    alert("Error: the item may not have been checked.")
-                }
-            });
-        }
-
-        function showAddShoppingItemModal() {
-            $('#loading').show();
-            $('#modalDiv').load('/ShoppingList/AddItem', function () {
-                $('#loading').hide();
-                $('#addShoppingItemModal').modal('show');
-            });
-        }
-
-        $(document).ready(function () {
-            $('.shoppingItemCheck').change(function () {
-                var id = $(this).data('id');
-                $.ajax({
-                    type: "POST",
-                    url: '/ShoppingList/CheckShoppingItem',
-                    data: { id: id, checkedVal: $(this).is(':checked') },
-                    success: function (data) {
-                        if (!data.success) {
-                            alert("Error: the item may not have been checked.")
-                        }
-                    },
-                    error: function () {
-                        alert("Error: the item may not have been checked.")
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="~/js/ShoppingList.js" asp-append-version="true"></script>
+    <script src="~/js/Checklist.js" asp-append-version="true"></script>
 }
+
+
+@*@foreach (var item in Model)
+        {
+            <div class="row checkContainer" data-id="@item.Id" style="border-bottom:solid 1px #ccc;">
+                <div class="row">
+                    <h5 class="col-sm-12">
+                        <span class="pull-left">
+                            <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
+                            <label for="cb@(item.Id)" class="check-box"></label>
+                        </span>
+                        <span class="pull-left" style="margin-left: 10px; margin-top: 3px;">@item.Name</span>
+                        <span class="pull-right">@item.Quantity @item.Unit <a href="javascript:removeItem(@item.Id)" class="text-danger"><i class="fas fa-times"></i></a></span>
+                    </h5>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p style="padding-left: 40px;">@item.Notes</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+    <a href="javascript:showAddShoppingItemModal()" class="float">
+        <i class="fas fa-plus my-float"></i>
+    </a>*@

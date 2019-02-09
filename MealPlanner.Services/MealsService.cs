@@ -124,11 +124,11 @@ namespace MealPlanner.Services
             return mealItems.OrderBy(x => x.Ingredient.Name).ToList();
         }
 
-        public async Task<List<RecipeDrillInModel>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
+        public async Task<List<string>> GetMealsByIngredientInfo(int? ingredientId, int? unitId)
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
-                return await context.Recipes
+                var drillIns = await context.Recipes
                     .AsNoTracking()
                     .Where(x => x.RecipeDetails.Count() > 0 &&
                                 x.RecipeDetails.Where(y => y.IngredientId == ingredientId && 
@@ -143,6 +143,8 @@ namespace MealPlanner.Services
                         UnitName = x.RecipeDetails.Where(y => y.IngredientId == ingredientId && y.UnitId == unitId).Select(y => y.Unit.Name).FirstOrDefault()
                     })
                     .ToListAsync();
+
+                return drillIns.Select(x => $"{x.RecipeName} - {x.TotalQuantity} {x.UnitName}").ToList();
             }
         }
     }

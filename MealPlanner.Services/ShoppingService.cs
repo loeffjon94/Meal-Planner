@@ -42,12 +42,9 @@ namespace MealPlanner.Services
                 {
                     context.ShoppingListItems.Add(new ShoppingListItem
                     {
-                        Name = item.IngredientName,
-                        Quantity = item.Quantity,
-                        Unit = item.Unit,
-                        IngredientId = item.IngredientId,
-                        UnitId = item.UnitId,
-                        Order = 0
+                        Name = $"{item.IngredientName} ({item.Quantity} {item.Unit})",
+                        Order = 0,
+                        Notes = string.Join('\n', await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
                     });
                 }
                 await context.SaveChangesAsync();
@@ -60,30 +57,6 @@ namespace MealPlanner.Services
                 return await context.ShoppingListItems
                     .AsNoTracking()
                     .ToListAsync();
-        }
-
-        public async Task<int?> GetShoppingItemIngredientId(int id)
-        {
-            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
-            {
-                return await context.ShoppingListItems
-                    .AsNoTracking()
-                    .Where(x => x.Id == id)
-                    .Select(x => x.IngredientId)
-                    .SingleOrDefaultAsync();
-            }
-        }
-
-        public async Task<int?> GetShoppingItemUnitId(int id)
-        {
-            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
-            {
-                return await context.ShoppingListItems
-                    .AsNoTracking()
-                    .Where(x => x.Id == id)
-                    .Select(x => x.UnitId)
-                    .SingleOrDefaultAsync();
-            }
         }
 
         public async Task<bool> CheckShoppingListItem(int id, bool checkedVal)
@@ -167,6 +140,47 @@ namespace MealPlanner.Services
                     item.Order = (await GetMaxItemOrder()) + 1;
                 context.ShoppingListItems.Add(item);
                 await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<int> GetNumberOfShoppingListItems()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.ShoppingListItems.CountAsync();
+        }
+
+        public async Task<ShoppingListItem> CreateBlankEntry()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var item = new ShoppingListItem
+                {
+                    Order = await GetMaxItemOrder() + 1
+                };
+                context.ShoppingListItems.Add(item);
+                await context.SaveChangesAsync();
+                return item;
+            }
+        }
+
+        public async Task<bool> UpdateShoppingItem(int id, string value)
+        {
+            try
+            {
+                using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                {
+                    var item = await context.ShoppingListItems
+                        .Where(x => x.Id == id)
+                        .SingleOrDefaultAsync();
+                    item.Name = value;
+                    context.Update(item);
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
     }

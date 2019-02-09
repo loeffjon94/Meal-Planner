@@ -10,5 +10,9 @@
   {
     "outputFile": "wwwroot/css/site.css",
     "inputFile": "wwwroot/css/site.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/Checklist.css",
+    "inputFile": "wwwroot/css/Checklist.scss"
   }
 ]
