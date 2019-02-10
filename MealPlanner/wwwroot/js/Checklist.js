@@ -34,7 +34,7 @@ function RemoveCheck(id) {
 }
 
 function InitReorder() {
-    $('.ShoppingList').sortable().bind('sortupdate', function (event, ui) {
+    $('.ShoppingList').sortable({ handle: '.handler' }).bind('sortupdate', function (event, ui) {
         var id = ui.item.data('id');
         var previousId = ui.item.prev().data('id');
         UpdateOrder(id, previousId);

@@ -14,7 +14,7 @@
 /***** Text box *****/
 input {
   display: inline-block;
-  width: 85%;
+  width: 80%;
   height: 25px;
   resize: none;
   box-sizing: border-box;
@@ -49,3 +49,6 @@ input {
 
 .notesSection {
   padding-left: 40px; }
+
+.handler {
+  margin-right: 10px; }

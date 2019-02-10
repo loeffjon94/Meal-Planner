@@ -13,21 +13,23 @@
 <ul class="ShoppingList">
     @foreach (var item in Model.OrderBy(x => x.Order))
     {
-        <li class="item" data-id="@item.Id">
-            <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
-            <label for="cb@(item.Id)" class="check-box"></label>
-            <input maxlength="100" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
-            <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
-            @if (!string.IsNullOrEmpty(item.Notes))
-            {
-                <br />
-                <p class="notesSection">@Html.Raw(item.Notes)</p>
-            }
-        </li>
+    <li class="item" data-id="@item.Id">
+        <i class="fas fa-grip-vertical handler" style="cursor: n-resize;"></i>
+        <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
+        <label for="cb@(item.Id)" class="check-box"></label>
+        <input maxlength="100" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
+        <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
+        @if (!string.IsNullOrEmpty(item.Notes))
+        {
+            <br />
+            <p class="notesSection">@Html.Raw(item.Notes)</p>
+        }
+    </li>
     }
 </ul>
 <a class="add" href="javascript:AddItem()"><i class="fas fa-plus text-success"></i> Add item</a>
 @section Scripts {
+    <script src="~/lib/jquery-ui/jquery.ui.touch-punch.min.js"></script>
     <script src="~/js/ShoppingList.js" asp-append-version="true"></script>
     <script src="~/js/Checklist.js" asp-append-version="true"></script>
 }
