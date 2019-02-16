@@ -1,0 +1,71 @@
+﻿@model IEnumerable<MealPlanner.Data.Models.RecipeDetail>
+
+<h2>Grocery List</h2>
+<hr />
+<table class="table" id="shoppingListTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ingredient)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            var unit = item.Unit.Id == ViewBag.EachId ? "" : item.Unit.Name;
+            <tr id="row@(item.Id)">
+                <td>
+                    <div style="padding: 8px;">
+                        @item.Ingredient.Name (@item.Quantity @unit)
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group" style="float:right; padding: 8px;">
+                        <a href="#stay" onclick="removeItem(@item.Id)" class="btn btn-sm btn-danger">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="#stay" id="undoBtn" onclick="undoRemove()" class="btn btn-warning" style="width: 100%; display:none; position:fixed; bottom: 0; right: 0;">Undo</a>
+
+<style>
+    td {
+        padding: 0 !important;
+    }
+</style>
+
+<script>
+    var removed = [];
+
+    function removeItem(id) {
+        removed.push(id);
+        $('#row' + id).children('td').children('div').slideUp(200);
+        $('#undoBtn').slideDown(200);
+    }
+
+    function undoRemove() {
+        $('#row' + removed.pop()).children('td').children('div').slideDown(200);
+        if (removed.length == 0) {
+            $('#undoBtn').slideUp(200);
+        }
+    }
+
+    $('tr').on('click', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).find('td').css('background-color', 'transparent');
+            $(this).find('td').css('color', '#2c3e50');
+            $(this).removeClass('selected');
+        }
+        else {
+            $(this).find('td').css('background-color', '#2c3e50');
+            $(this).find('td').css('color', 'white');
+            $(this).addClass('selected');
+        }
+    })
+</script>
