@@ -25,7 +25,7 @@
             <ul class="menu-section-list">
                 <li><a asp-area="" asp-controller="Recipes" asp-action="Index"><i class="fas fa-list-ul"></i> Recipes</a></li>
                 <li><a asp-area="" asp-controller="Ingredients" asp-action="Index"><i class="fas fa-puzzle-piece"></i> Ingredients</a></li>
-                <li><a asp-area="" asp-controller="ShoppingList" asp-action="NewShoppingList"><i class="fas fa-shopping-cart"></i> Grocery List</a></li>
+                <li><a asp-area="" asp-controller="ShoppingList" asp-action="Index"><i class="fas fa-shopping-cart"></i> Grocery List</a></li>
                 <li><a asp-area="" asp-controller="Stores" asp-action="Index"><i class="fas fa-store-alt"></i> Stores</a></li>
                 <li><a asp-area="" asp-controller="Units" asp-action="Index"><i class="fas fa-weight"></i> Units</a></li>
                 <li><a asp-area="" asp-controller="RecipeCategories" asp-action="Index"><i class="fas fa-info-circle"></i> Categories</a></li>
@@ -48,6 +48,7 @@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>*@
     <script src="https://unpkg.com/scrollreveal@4.0.0"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

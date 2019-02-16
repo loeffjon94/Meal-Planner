@@ -1,0 +1,35 @@
+﻿@model IEnumerable<MealPlanner.Models.Entities.ShoppingListItem>
+
+<link href="~/css/Checkbox.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/Checklist.min.css" rel="stylesheet" asp-append-version="true" />
+<h2>Grocery List</h2>
+<div class="btn-group">
+    <a asp-action="AddCurrentMealPlan" class="btn btn-sm btn-primary">Add Meal Plan <i class="fas fa-plus"></i></a>
+    <a asp-action="ClearAllChecked" class="btn btn-sm btn-warning">Clear all Checked <i class="fas fa-eraser"></i></a>
+    <a asp-action="ClearAll" onclick="return confirm('Are you sure you want to clear the whole list?')" class="btn btn-sm btn-danger">Clear All <i class="fas fa-trash"></i></a>
+</div>
+<hr />
+
+<ul class="ShoppingList">
+    @foreach (var item in Model.OrderBy(x => x.Order))
+    {
+    <li class="item" data-id="@item.Id">
+        <i class="fas fa-grip-vertical handler" style="cursor: n-resize;"></i>
+        <input type="checkbox" class="shoppingItemCheck" data-id="@item.Id" id="cb@(item.Id)" @(item.Checked ? "checked" : "") />
+        <label for="cb@(item.Id)" class="check-box"></label>
+        <input maxlength="100" placeholder="Click to edit" value="@item.Name" class="check-textbox" />
+        <a href="javascript:RemoveCheck(@item.Id)"><i class="fas fa-times text-danger"></i></a>
+        @if (!string.IsNullOrEmpty(item.Notes))
+        {
+            <br />
+            <p class="notesSection">@Html.Raw(item.Notes)</p>
+        }
+    </li>
+    }
+</ul>
+<a class="add" href="javascript:AddItem()"><i class="fas fa-plus text-success"></i> Add item</a>
+@section Scripts {
+    <script src="~/lib/jquery-ui/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/js/ShoppingList.js" asp-append-version="true"></script>
+    <script src="~/js/Checklist.js" asp-append-version="true"></script>
+}

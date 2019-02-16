@@ -18,6 +18,7 @@ namespace MealPlanner.Data.Contexts
         public virtual DbSet<Image> Images { get; set; }
         public virtual DbSet<MealPlan> MealPlans { get; set; }
         public virtual DbSet<SideRelationship> SideRelationships { get; set; }
+        public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,54 @@
+﻿ul.ShoppingList {
+  padding: 0;
+  width: 100%; }
+  ul.ShoppingList li {
+    list-style: none;
+    margin-top: 5px;
+    width: 100%; }
+  ul.ShoppingList li {
+    margin-left: 5px; }
+
+.add, .print {
+  margin-left: 5px; }
+
+/***** Text box *****/
+input {
+  display: inline-block;
+  width: 80%;
+  height: 25px;
+  resize: none;
+  box-sizing: border-box;
+  font-weight: 600; }
+
+input:focus, input:hover {
+  border: 1px dashed lightgrey; }
+
+input {
+  border: none;
+  outline: none; }
+
+/***** Remove Button *****/
+.add, .icon-remove {
+  cursor: pointer; }
+
+/***** Print Button *****/
+.print {
+  margin: 10px 5px; }
+
+.print a {
+  text-decoration: none;
+  color: black; }
+
+.print:before {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: FontAwesome;
+  font-size: 22px;
+  content: "\f02f";
+  letter-spacing: 5px; }
+
+.notesSection {
+  padding-left: 40px; }
+
+.handler {
+  padding: 10px; }

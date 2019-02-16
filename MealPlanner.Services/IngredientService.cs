@@ -7,37 +7,47 @@ namespace MealPlanner.Services
 {
     public class IngredientService
     {
-        private MealPlannerContext _context;
+        private DbContextOptions<MealPlannerContext> _dbOptions;
 
-        public IngredientService(MealPlannerContext context)
+        public IngredientService(DbContextOptions<MealPlannerContext> dbOptions)
         {
-            _context = context;
+            _dbOptions = dbOptions;
         }
 
         public async Task<Ingredient> GetIngredient(int? id)
         {
-            return await _context.Ingredients
-                .Include(i => i.Store)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Ingredients
+                    .Include(i => i.Store)
+                    .SingleOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task CreateIngredient(Ingredient ingredient)
         {
-            _context.Add(ingredient);
-            await _context.SaveChangesAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                context.Add(ingredient);
+                await context.SaveChangesAsync();
+            }
         }
 
         public async Task UpdateIngredient(Ingredient ingredient)
         {
-            _context.Update(ingredient);
-            await _context.SaveChangesAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                context.Update(ingredient);
+                await context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteIngredient(int id)
         {
             var ingredient = await GetIngredient(id);
-            _context.Ingredients.Remove(ingredient);
-            await _context.SaveChangesAsync();
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                context.Ingredients.Remove(ingredient);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
