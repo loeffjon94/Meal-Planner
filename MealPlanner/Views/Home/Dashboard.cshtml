@@ -1,5 +1,5 @@
 ﻿@model MealPlanner.Models.Models.DashboardModel
 
-@Html.Partial("FeaturedMeals", Model)
+<partial name="FeaturedMeals" model="Model" />
 <hr style="margin-bottom: 10px;" />
-@Html.Partial("MealPlans", Model)
+<partial name="MealPlans" model="Model" />
