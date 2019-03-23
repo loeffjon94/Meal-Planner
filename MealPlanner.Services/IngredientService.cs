@@ -27,6 +27,7 @@ namespace MealPlanner.Services
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
+                ingredient.Order = await GetMaxOrder() + 1;
                 context.Add(ingredient);
                 await context.SaveChangesAsync();
             }
@@ -108,6 +109,12 @@ namespace MealPlanner.Services
                 }
                 await context.SaveChangesAsync();
             }
+        }
+
+        private async Task<int> GetMaxOrder()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                return await context.Ingredients.MaxAsync(x => x.Order);
         }
     }
 }
