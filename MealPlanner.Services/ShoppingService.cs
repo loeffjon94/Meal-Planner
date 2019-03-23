@@ -35,9 +35,11 @@ namespace MealPlanner.Services
         public async Task AddCurrentMealPlan()
         {
             var mealsTask = _mealsService.GetShoppingMealsWithIngredients();
-            await Task.WhenAll(mealsTask);
+            var maxOrderTask = GetMaxItemOrder();
+            await Task.WhenAll(mealsTask, maxOrderTask);
 
             var meals = mealsTask.Result;
+            var maxOrder = maxOrderTask.Result;
             var recipeItems = _mealsService.GetIngredients(meals);
             var list = GenerateShoppingList(recipeItems);
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
@@ -47,7 +49,7 @@ namespace MealPlanner.Services
                     context.ShoppingListItems.Add(new ShoppingListItem
                     {
                         Name = $"{item.IngredientName} ({item.Quantity} {item.Unit})",
-                        Order = item.IngredientOrder,
+                        Order = maxOrder + item.IngredientOrder,
                         Notes = string.Join("<br/>", await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
                     });
                 }
