@@ -232,9 +232,8 @@ namespace MealPlanner.Services
 
                     item.Order = (previousItem != null ? previousItem.Order : 0) + 1;
                     context.Update(item);
-                    var saveTask = context.SaveChangesAsync();
-                    var increaseOrderTask = IncreaseItemOrders(item.Order, item.Id);
-                    await Task.WhenAll(saveTask, increaseOrderTask);
+                    await context.SaveChangesAsync();
+                    await IncreaseItemOrders(item.Order, item.Id);
                     return true;
                 }
             }

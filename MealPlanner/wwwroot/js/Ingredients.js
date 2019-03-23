@@ -1,8 +1,8 @@
-﻿function UpdateIngredientOrder(id, previousId) {
+﻿function UpdateIngredientOrder(id, previousId, nextId) {
     $.ajax({
         type: "POST",
         url: '/Ingredients/UpdateIngredientOrder',
-        data: { id: id, previousId: previousId },
+        data: { id: id, previousId: previousId, nextId: nextId },
         success: function (data) {
             if (!data.success) {
                 alert("Error: the ingredient may not have updated correctly.");
@@ -27,9 +27,16 @@ function InitCheck() {
             return $helper;
         }
     }).bind('sortupdate', function (event, ui) {
-        var id = ui.item.data('id');
-        var previousId = ui.item.prev().data('id');
-        UpdateIngredientOrder(id, previousId);
+        var id = ui.item[0].dataset.id;
+        var previousSibling = ui.item[0].previousElementSibling;
+        var previousId = null;
+        if (previousSibling)
+            previousId = previousSibling.dataset.id;
+        var nextSibling = ui.item[0].nextElementSibling;
+        var nextId = null;
+        if (nextSibling)
+            nextId = nextSibling.dataset.id;
+        UpdateIngredientOrder(id, previousId, nextId);
     });
 }
 

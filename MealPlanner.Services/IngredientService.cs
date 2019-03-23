@@ -1,6 +1,7 @@
 ﻿using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,30 +53,110 @@ namespace MealPlanner.Services
             }
         }
 
-        public async Task<bool> UpdateIngredientOrder(int id, int previousId)
+        public async Task<bool> UpdateIngredientOrder(int ingredientId, int? previousIngredientId, int? nextIngredientId)
         {
             try
             {
                 using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
                 {
-                    var ingredientTask = GetIngredient(id);
-                    var previousIngredientTask = GetIngredient(previousId);
-                    await Task.WhenAll(ingredientTask, previousIngredientTask);
+                    var ingredientTask = context.Ingredients.FindAsync(ingredientId);
+                    var previousOrderTask = GetIngredientOrder(previousIngredientId);
+                    var nextOrderTask = GetIngredientOrder(nextIngredientId);
+                    await Task.WhenAll(ingredientTask, previousOrderTask, nextOrderTask);
 
-                    var item = ingredientTask.Result;
-                    var previousItem = previousIngredientTask.Result;
+                    var ingredient = ingredientTask.Result;
+                    var previousOrder = previousOrderTask.Result;
+                    var nextOrder = nextOrderTask.Result;
+                    int stopOrder = ingredient.Order;
 
-                    item.Order = (previousItem != null ? previousItem.Order : 0) + 1;
-                    context.Update(item);
-                    var saveTask = context.SaveChangesAsync();
-                    var increaseOrderTask = IncreaseItemOrders(item.Order, item.Id);
-                    await Task.WhenAll(saveTask, increaseOrderTask);
-                    return true;
+                    if (previousOrder.HasValue && ingredient.Order >= previousOrder)
+                        ingredient.Order = previousOrder.Value + 1;
+                    else if (nextOrder.HasValue)
+                        ingredient.Order = nextOrder.Value - 1 > 0 ? nextOrder.Value : 1;
+                    else
+                        ingredient.Order = previousOrder.Value;//set to the last row
+                    if (stopOrder == ingredient.Order)
+                        return true;
+
+                    context.Entry(ingredient).State = EntityState.Modified;
+                    await context.SaveChangesAsync();//needs to happen first
+                    await UpdateAffectedSequences(ingredient.Order, ingredient.Id, stopOrder);
                 }
+                return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        private async Task UpdateAffectedSequences(int order, int excludedId, int stopOrder)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var affectedQuestionIdsQuery = context.Ingredients
+                    .AsNoTracking()
+                    .Where(x => x.Id != excludedId);
+
+                List<Task> tasks = new List<Task>();
+                if (order < stopOrder)
+                {
+                    var affectedQuestionIds = await affectedQuestionIdsQuery
+                        .Where(x => x.Order >= order &&
+                                    x.Order <= stopOrder)
+                        .Select(x => x.Id).ToListAsync();
+
+                    foreach (var id in affectedQuestionIds)
+                        tasks.Add(IncrementOrder(id));
+                }
+                else
+                {
+                    var affectedQuestionIds = await affectedQuestionIdsQuery
+                        .Where(x => x.Order <= order &&
+                                    x.Order >= stopOrder)
+                        .Select(x => x.Id).ToListAsync();
+
+                    foreach (var id in affectedQuestionIds)
+                        tasks.Add(DecrementOrder(id));
+                }
+                await Task.WhenAll(tasks);
+            }
+        }
+
+        private async Task IncrementOrder(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var ingredient = await context.Ingredients.FindAsync(id);
+                ingredient.Order++;
+                context.Entry(ingredient).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private async Task DecrementOrder(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var ingredient = await context.Ingredients.FindAsync(id);
+                ingredient.Order--;
+                context.Entry(ingredient).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private async Task<int?> GetIngredientOrder(int? id)
+        {
+            if (!id.HasValue)
+                return null;
+
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.Ingredients
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Select(x => x.Order)
+                    .SingleOrDefaultAsync();
             }
         }
 
@@ -88,24 +169,6 @@ namespace MealPlanner.Services
                 {
                     ingredients[i].Order = i + 1;
                     context.Update(ingredients[i]);
-                }
-                await context.SaveChangesAsync();
-            }
-        }
-
-        private async Task IncreaseItemOrders(int startOrder, int excludeId)
-        {
-            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
-            {
-                var itemsToUpdate = await context.Ingredients
-                    .Where(x => x.Order >= startOrder &&
-                                x.Id != excludeId)
-                    .ToListAsync();
-
-                foreach (var item in itemsToUpdate)
-                {
-                    item.Order++;
-                    context.Update(item);
                 }
                 await context.SaveChangesAsync();
             }

@@ -133,9 +133,9 @@ namespace MealPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<JsonResult> UpdateIngredientOrder(int id, int previousId)
+        public async Task<JsonResult> UpdateIngredientOrder(int id, int? previousId, int? nextId)
         {
-            return Json(new { success = await _ingredientService.UpdateIngredientOrder(id, previousId) });
+            return Json(new { success = await _ingredientService.UpdateIngredientOrder(id, previousId, nextId) });
         }
 
         public async Task<IActionResult> ResetIngredientOrderAlphabetically()
