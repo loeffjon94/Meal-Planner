@@ -15,6 +15,7 @@ namespace MealPlanner.Models.Entities
         public string Name { get; set; }
         [Display(Name = "Store")]
         public int StoreId { get; set; }
+        public int Order { get; set; }
         public virtual Store Store { get; set; }
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
     }

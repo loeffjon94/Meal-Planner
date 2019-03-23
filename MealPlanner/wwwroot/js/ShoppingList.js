@@ -26,12 +26,12 @@ function CreateShoppingItemEntry(callback) {
         url: '/ShoppingList/CreateShoppingItem',
         success: function (data) {
             if (!data.id) {
-                alert("Error: the item may not created correctly.");
+                alert("Error: the item may not have created correctly.");
             }
             callback(data.id);
         },
         error: function () {
-            alert("Error: the item may not created correctly.");
+            alert("Error: the item may not have created correctly.");
         }
     });
 }
@@ -43,11 +43,11 @@ function UpdateShoppingItemEntry(id, value) {
         data: { id: id, value: value },
         success: function (data) {
             if (!data.success) {
-                alert("Error: the item may not updated correctly.");
+                alert("Error: the item may not have updated correctly.");
             }
         },
         error: function () {
-            alert("Error: the item may not updated correctly.");
+            alert("Error: the item may not have updated correctly.");
         }
     });
 }
@@ -59,11 +59,11 @@ function UpdateOrder(id, previousId) {
         data: { id: id, previousId: previousId },
         success: function (data) {
             if (!data.success) {
-                alert("Error: the item may not updated correctly.");
+                alert("Error: the item may not have updated correctly.");
             }
         },
         error: function () {
-            alert("Error: the item may not updated correctly.");
+            alert("Error: the item may not have updated correctly.");
         }
     });
 }

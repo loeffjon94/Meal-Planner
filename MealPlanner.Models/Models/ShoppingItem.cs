@@ -11,5 +11,6 @@ namespace MealPlanner.Models.Models
         public decimal Quantity { get; set; }
         public string Unit { get; set; }
         public int UnitId { get; set; }
+        public int IngredientOrder { get; set; }
     }
 }

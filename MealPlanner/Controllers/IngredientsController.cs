@@ -23,7 +23,7 @@ namespace MealPlanner.Controllers
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).Include(i => i.RecipeDetails).OrderBy(x => x.Name);
+            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).Include(i => i.RecipeDetails).OrderBy(x => x.Order);
             return View(await mealPlannerContext.ToListAsync());
         }
 
@@ -130,6 +130,17 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _ingredientService.DeleteIngredient(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<JsonResult> UpdateIngredientOrder(int id, int previousId)
+        {
+            return Json(new { success = await _ingredientService.UpdateIngredientOrder(id, previousId) });
+        }
+
+        public async Task<IActionResult> ResetIngredientOrderAlphabetically()
+        {
+            await _ingredientService.ResetIngredientOrderAlphabetically();
             return RedirectToAction(nameof(Index));
         }
 

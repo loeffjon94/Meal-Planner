@@ -1,6 +1,7 @@
 ﻿using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MealPlanner.Services
@@ -46,6 +47,65 @@ namespace MealPlanner.Services
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
                 context.Ingredients.Remove(ingredient);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> UpdateIngredientOrder(int id, int previousId)
+        {
+            try
+            {
+                using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+                {
+                    var ingredientTask = GetIngredient(id);
+                    var previousIngredientTask = GetIngredient(previousId);
+                    await Task.WhenAll(ingredientTask, previousIngredientTask);
+
+                    var item = ingredientTask.Result;
+                    var previousItem = previousIngredientTask.Result;
+
+                    item.Order = (previousItem != null ? previousItem.Order : 0) + 1;
+                    context.Update(item);
+                    var saveTask = context.SaveChangesAsync();
+                    var increaseOrderTask = IncreaseItemOrders(item.Order, item.Id);
+                    await Task.WhenAll(saveTask, increaseOrderTask);
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task ResetIngredientOrderAlphabetically()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var ingredients = await context.Ingredients.OrderBy(x => x.Name).ToArrayAsync();
+                for (int i = 0; i < ingredients.Length; i++)
+                {
+                    ingredients[i].Order = i + 1;
+                    context.Update(ingredients[i]);
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private async Task IncreaseItemOrders(int startOrder, int excludeId)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var itemsToUpdate = await context.Ingredients
+                    .Where(x => x.Order >= startOrder &&
+                                x.Id != excludeId)
+                    .ToListAsync();
+
+                foreach (var item in itemsToUpdate)
+                {
+                    item.Order++;
+                    context.Update(item);
+                }
                 await context.SaveChangesAsync();
             }
         }

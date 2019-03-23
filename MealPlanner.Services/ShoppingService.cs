@@ -27,18 +27,17 @@ namespace MealPlanner.Services
                 IngredientName = x.Where(y => y.IngredientId.HasValue).Select(y => y.Ingredient.Name).FirstOrDefault(),
                 Quantity = x.Where(y => y.Quantity.HasValue).Sum(y => y.Quantity.Value),
                 Unit = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Name).FirstOrDefault(),
-                UnitId = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Id).FirstOrDefault()
+                UnitId = x.Where(y => y.UnitId.HasValue).Select(y => y.Unit.Id).FirstOrDefault(),
+                IngredientOrder = x.Where(y => y.IngredientId.HasValue).Select(y => y.Ingredient.Order).FirstOrDefault()
             }).ToList();
         }
 
         public async Task AddCurrentMealPlan()
         {
             var mealsTask = _mealsService.GetShoppingMealsWithIngredients();
-            var orderTask = GetMaxItemOrder();
-            await Task.WhenAll(mealsTask, orderTask);
+            await Task.WhenAll(mealsTask);
 
             var meals = mealsTask.Result;
-            var order = orderTask.Result + 1;
             var recipeItems = _mealsService.GetIngredients(meals);
             var list = GenerateShoppingList(recipeItems);
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
@@ -48,10 +47,9 @@ namespace MealPlanner.Services
                     context.ShoppingListItems.Add(new ShoppingListItem
                     {
                         Name = $"{item.IngredientName} ({item.Quantity} {item.Unit})",
-                        Order = order,
+                        Order = item.IngredientOrder,
                         Notes = string.Join("<br/>", await _mealsService.GetMealsByIngredientInfo(item.IngredientId, item.UnitId))
                     });
-                    order++;
                 }
                 await context.SaveChangesAsync();
             }
