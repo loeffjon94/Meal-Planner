@@ -18,14 +18,16 @@ namespace MealPlanner.Controllers
         private MealsService _mealsService;
         private MealPlannerContext _context;
         private MealGroupService _mealGroupService;
+        private RecipeService _recipeService;
 
         public HomeController(MealPlannerContext context, MealGroupService mealGroupService,
-            PlanningService planningService, MealsService mealsService)
+            PlanningService planningService, MealsService mealsService, RecipeService recipeService)
         {
             _context = context;
             _planningService = planningService;
             _mealsService = mealsService;
             _mealGroupService = mealGroupService;
+            _recipeService = recipeService;
         }
 
         public IActionResult Index()
@@ -36,7 +38,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var featuredMealsTask = _mealsService.GetFeaturedMeals();
-            var mealPlansTask = _mealsService.GetMealPlans();
+            var mealPlansTask = _mealsService.GetDashboardMealPlans();
             await Task.WhenAll(featuredMealsTask, mealPlansTask);
 
             DashboardModel vm = new DashboardModel()
@@ -50,11 +52,7 @@ namespace MealPlanner.Controllers
         public async Task<IActionResult> SelectMealPartial(int? id)
         {
             var planTask = _planningService.GetPlan(id);
-            var recipesTask = _context.Recipes
-                .AsNoTracking()
-                .OrderBy(x => x.Name)
-                .Select(x => new { x.Id, x.Name })
-                .ToListAsync();
+            var recipesTask = _recipeService.GetRecipes();
             var mealGroupsTask = _mealGroupService.GetMealGroups();
             await Task.WhenAll(planTask, recipesTask, mealGroupsTask);
 

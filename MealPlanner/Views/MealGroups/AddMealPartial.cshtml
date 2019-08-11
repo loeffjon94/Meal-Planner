@@ -1,28 +1,97 @@
-﻿@model MealPlanner.Models.Entities.MealGroupRecipeRelation
+﻿@model MealPlanner.Models.Entities.MealPlan
 
-<div class="modal fade" tabindex="-1" role="dialog" id="addMealModal">
-    <div class="modal-dialog" role="document">
+<div class="modal fade in" id="addMealModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add Recipe</h4>
+            <div class="modal-header" style="background-color: #2c3e50;">
+                <button type="button" class="close" data-dismiss="modal" style="color: white;"><i>&times;</i></button>
+                <h3 class="modal-title" style="color: white;">Select Meal</h3>
             </div>
-            <form asp-action="AddMealPartial">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="MealGroupId" />
+            <form asp-action="AddMealPartial" id="selectMealForm">
                 <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="MealGroupId" />
+                    <input type="hidden" asp-for="Id" />
                     <div class="form-group">
                         <label asp-for="RecipeId" class="control-label"></label>
-                        <select asp-for="RecipeId" class="form-control" asp-items="ViewBag.Recipes">
-                            <option value="" selected="selected">Select a Recipe</option>
-                        </select>
+                        <select asp-for="RecipeId" class="form-control" asp-items="ViewBag.Recipes"><option>Select a Meal</option></select>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="ExcludeFromShoppingList" class="control-label" style="padding-right: 10px;"></label>
+                        <input type="checkbox" asp-for="ExcludeFromShoppingList" />
+                    </div>
+                    @{ int count = 0;}
+                    <div id="sidesDiv">
+                        @foreach (var side in Model.SideRecipes)
+                        {
+                            <div class="form-group">
+                                <label class="control-label">Side @(count + 1)</label>
+                                <select id="SideRecipes[@(count)].RecipeId" name="SideRecipes[@(count)].RecipeId" class="form-control">
+                                    <option>Select a Side</option>
+                                    @foreach (var recipe in ViewBag.Recipes as SelectList)
+                                    {
+                                        if (int.Parse(recipe.Value) == side.RecipeId)
+                                        {
+                                            <option value="@recipe.Value" selected="selected">@recipe.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@recipe.Value">@recipe.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="SideRecipes[@(count)].ExcludeFromShoppingList" style="padding-right: 10px;">Exclude from Grocery List</label>
+                                <input type="checkbox" data-val="true" id="SideRecipes[@(count)].ExcludeFromShoppingList" name="SideRecipes[@(count)].ExcludeFromShoppingList" value="true" @(side.ExcludeFromShoppingList ? "checked" : "")>
+                            </div>
+                            count++;
+                        }
+                    </div>
+                    <a href="javascript:addSide()"><i class="glyphicon glyphicon-plus"></i> Add Side</a>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add <i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@{
+    var data = ViewBag.RecipeList;
+
+    //serialize collection of anonymous objects
+    string arrStr = Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.None);
+}
+
+<script>
+    var count = @Model.SideRecipes.Count();
+    var recipeOptions = JSON.parse('@arrStr'.replace(/&quot;/g, '"'));
+
+    function addSide() {
+        $('#sidesDiv').append(
+            '<div id="hiddenSide' + count + '" style="display:none;">' +
+            '<div class="form-group">' +
+            '<label class="control-label">Side ' + (count + 1) + '</label>' +
+            '<select id="SideRecipes[' + count + '].RecipeId" name="SideRecipes[' + count + '].RecipeId" class="form-control sideSelect" asp-items="ViewBag.Recipes"><option>Select a Side</option></select>' +
+            '</div>' +
+            '<div class="form-group">' +
+            '<label class="control-label" for="SideRecipes[' + count + '].ExcludeFromShoppingList" style="padding-right: 10px;">Exclude from Grocery List</label>' +
+            '<input type="checkbox" data-val="true" id="SideRecipes[' + count + '].ExcludeFromShoppingList" name="SideRecipes[' + count + '].ExcludeFromShoppingList" value="true">' +
+            '</div></div>');
+
+
+        $('.sideSelect').each(function (i, obj) {
+            if (obj.childElementCount <= 1) {
+                for (var i = 0; i < recipeOptions.length; i++) {
+                    $(this).append('<option value="' + recipeOptions[i].Id + '">' + recipeOptions[i].Name + '</option>')
+                }
+            }
+        });
+
+        $('#hiddenSide' + count).slideDown(200);
+        count++;
+    }
+</script>

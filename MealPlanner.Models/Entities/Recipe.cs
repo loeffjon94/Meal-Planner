@@ -30,6 +30,5 @@ namespace MealPlanner.Models.Entities
         public ICollection<RecipeDetail> RecipeDetails { get; set; }
         public ICollection<MealPlan> MealPlans { get; set; }
         public ICollection<SideRelationship> SidePlans { get; set; }
-        public ICollection<MealGroupRecipeRelation> MealGroupRecipeRelations { get; set; }
     }
 }

@@ -48,13 +48,14 @@ namespace MealPlanner.Services
                     .ToListAsync();
         }
 
-        public async Task<List<MealPlan>> GetMealPlans()
+        public async Task<List<MealPlan>> GetDashboardMealPlans()
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
                 return await context.MealPlans
                     .AsNoTracking()
                     .Include(x => x.Recipe).ThenInclude(y => y.Image)
                     .Include(x => x.SideRecipes).ThenInclude(y => y.Recipe)
+                    .Where(x => !x.MealGroupId.HasValue)
                     .ToListAsync();
         }
 
@@ -64,6 +65,7 @@ namespace MealPlanner.Services
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
                 return await context.MealPlans
                     .AsNoTracking()
+                    .Where(x => !x.MealGroupId.HasValue)
                     .Include(x => x.Recipe).ThenInclude(y => y.Image)
                     .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Ingredient)
                     .Include(x => x.Recipe).ThenInclude(y => y.RecipeDetails).ThenInclude(z => z.Unit)
@@ -99,28 +101,6 @@ namespace MealPlanner.Services
             }
         }
 
-        public async Task AddMealGroup(int id)
-        {
-            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
-            {
-                var recipes = await context.MealGroupRecipeRelations
-                    .AsNoTracking()
-                    .Where(x => x.MealGroupId == id)
-                    .Select(x => x.Recipe)
-                    .ToListAsync();
-
-                List<Task> tasks = new List<Task>();
-                foreach (var recipe in recipes)
-                {
-                    tasks.Add(AddMealPlan(new MealPlan
-                    {
-                        RecipeId = recipe.Id
-                    }));
-                }
-                await Task.WhenAll(tasks);
-            }
-        }
-
         public async Task UpdateMealPlan(MealPlan plan)
         {
             using (var conn = new SqlConnection(_confg.GetConnectionString("MealPlannerContext")))
@@ -140,6 +120,37 @@ namespace MealPlanner.Services
             }
         }
 
+        public async Task AddMealGroup(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var plans = await context.MealPlans
+                    .AsNoTracking()
+                    .Where(x => x.MealGroupId == id)
+                    .Include(x => x.SideRecipes)
+                    .ToListAsync();
+
+                List<Task> tasks = new List<Task>();
+                foreach (var plan in plans)
+                {
+                    var newPlan = new MealPlan
+                    {
+                        RecipeId = plan.RecipeId
+                    };
+                    foreach (var side in plan.SideRecipes)
+                    {
+                        newPlan.SideRecipes.Add(new SideRelationship
+                        {
+                            ExcludeFromShoppingList = side.ExcludeFromShoppingList,
+                            RecipeId = side.RecipeId
+                        });
+                    }
+                    tasks.Add(AddMealPlan(newPlan));
+                }
+                await Task.WhenAll(tasks);
+            }
+        }
+
         public List<RecipeDetail> GetIngredients(List<MealPlan> meals)
         {
             List<RecipeDetail> mealItems = meals.Where(x => !x.ExcludeFromShoppingList).SelectMany(x => x.Recipe.RecipeDetails).ToList();
@@ -156,8 +167,8 @@ namespace MealPlanner.Services
                     .Where(x => x.RecipeDetails.Count() > 0 &&
                                 x.RecipeDetails.Where(y => y.IngredientId == ingredientId &&
                                                            y.UnitId == unitId).Count() > 0 &&
-                                (x.MealPlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0 ||
-                                x.SidePlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0))
+                                (x.MealPlans.Where(y => !y.ExcludeFromShoppingList && !y.MealGroupId.HasValue).Count() > 0 ||
+                                x.SidePlans.Where(y => !y.ExcludeFromShoppingList && !y.MealPlan.MealGroupId.HasValue).Count() > 0))
                     .Select(x => new RecipeDrillInModel
                     {
                         RecipeId = x.Id,

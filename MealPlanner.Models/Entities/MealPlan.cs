@@ -17,6 +17,8 @@ namespace MealPlanner.Models.Entities
         public int RecipeId { get; set; }
         [Display(Name = "Exclude from Grocery List")]
         public bool ExcludeFromShoppingList { get; set; }
+        public int? MealGroupId { get; set; }
+        public virtual MealGroup MealGroup { get; set; }
         public virtual Recipe Recipe { get; set; }
         public ICollection<SideRelationship> SideRecipes { get; set; }
         [NotMapped]

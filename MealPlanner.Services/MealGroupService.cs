@@ -1,7 +1,10 @@
-﻿using MealPlanner.Data.Contexts;
+﻿using Dapper;
+using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +13,12 @@ namespace MealPlanner.Services
     public class MealGroupService
     {
         private DbContextOptions<MealPlannerContext> _dbOptions;
+        private IConfiguration _config;
 
-        public MealGroupService(DbContextOptions<MealPlannerContext> dbOptions)
+        public MealGroupService(DbContextOptions<MealPlannerContext> dbOptions, IConfiguration config)
         {
             _dbOptions = dbOptions;
+            _config = config;
         }
 
         public async Task<List<MealGroup>> GetMealGroups()
@@ -43,8 +48,8 @@ namespace MealPlanner.Services
             {
                 return await context.MealGroups
                     .AsNoTracking()
-                    .Include(x => x.MealGroupRecipeRelations)
-                        .ThenInclude(x => x.Recipe)
+                    .Include(x => x.MealPlans).ThenInclude(x => x.Recipe)
+                    .Include(x => x.MealPlans).ThenInclude(x => x.SideRecipes).ThenInclude(x => x.Recipe)
                     .SingleOrDefaultAsync(x => x.Id == id);
             }
         }
@@ -74,46 +79,75 @@ namespace MealPlanner.Services
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
                 var group = await context.MealGroups
-                    .Include(x => x.MealGroupRecipeRelations)
+                    .Include(x => x.MealPlans)
                     .SingleOrDefaultAsync(x => x.Id == id);
 
-                var relations = group.MealGroupRecipeRelations.ToArray();
-                for (int i = 0; i < relations.Length; i++)
-                    context.MealGroupRecipeRelations.Remove(relations[i]);
+                var plans = group.MealPlans.ToArray();
+                for (int i = 0; i < plans.Length; i++)
+                    context.MealPlans.Remove(plans[i]);
 
                 context.MealGroups.Remove(group);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task AddRelation(MealGroupRecipeRelation relation)
+        public async Task AddPlan(MealPlan plan)
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
-                context.MealGroupRecipeRelations.Add(relation);
+                var sides = plan.SideRecipes.ToArray();
+                for (int i = 0; i < sides.Length; i++)
+                {
+                    if (sides[i].RecipeId == 0)
+                        plan.SideRecipes.Remove(sides[i]);
+                }
+
+                context.MealPlans.Add(plan);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task RemoveRelation(int id)
+        public async Task UpdatePlan(MealPlan plan)
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
-                var relation = await context.MealGroupRecipeRelations.FindAsync(id);
-                context.MealGroupRecipeRelations.Remove(relation);
+                using (var conn = new SqlConnection(_config.GetConnectionString("MealPlannerContext")))
+                    conn.Execute("DELETE FROM SideRelationships WHERE MealPlanId = @mealPlanId", new { mealPlanId = plan.Id });
+
+                var sides = plan.SideRecipes.ToArray();
+                for (int i = 0; i < sides.Length; i++)
+                {
+                    if (sides[i].RecipeId == 0)
+                        plan.SideRecipes.Remove(sides[i]);
+                }
+
+                context.MealPlans.Update(plan);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task<int> GetMealGroupIdFromRelation(int id)
+        public async Task RemovePlan(int id)
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
-                return await context.MealGroupRecipeRelations
+                var plan = await context.MealPlans
+                    .SingleOrDefaultAsync(x => x.Id == id);
+                using (var conn = new SqlConnection(_config.GetConnectionString("MealPlannerContext")))
+                    conn.Execute("DELETE FROM SideRelationships WHERE MealPlanId = @mealPlanId", new { mealPlanId = plan.Id });
+                context.MealPlans.Remove(plan);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<int> GetMealGroupIdFromPlan(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.MealPlans
                     .AsNoTracking()
                     .Where(x => x.Id == id)
                     .Select(x => x.MealGroupId)
-                    .SingleOrDefaultAsync();
+                    .SingleOrDefaultAsync() ?? 0;
             }
         }
     }

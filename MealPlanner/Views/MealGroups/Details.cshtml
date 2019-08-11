@@ -16,9 +16,14 @@
 <hr />
 
 <ul>
-    @foreach (var relation in Model.MealGroupRecipeRelations)
+    @foreach (var plan in Model.MealPlans)
     {
-        <li>@relation.Recipe.Name <a asp-action="RemoveMeal" asp-controller="MealGroups" asp-route-id="@relation.Id" class="text-danger"><i class="fas fa-times"></i></a></li>
+        var name = plan.Recipe.Name;
+        if (plan.SideRecipes.Count() > 0)
+        {
+            name += $", {string.Join(", ", plan.SideRecipes.Select(x => x.Recipe.Name))}";
+        }
+        <li>@name <a asp-action="RemoveMeal" asp-controller="MealGroups" asp-route-id="@plan.Id" class="text-danger"><i class="fas fa-times"></i></a></li>
     }
 </ul>
 

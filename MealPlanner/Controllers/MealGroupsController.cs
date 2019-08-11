@@ -60,26 +60,29 @@ namespace MealPlanner.Controllers
 
         public async Task<IActionResult> AddMealPartial(int mealGroupId)
         {
-            ViewBag.Recipes = (await _recipeService.GetRecipes())
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                });
-            return PartialView(new MealGroupRecipeRelation(mealGroupId));
+            var recipes = await _recipeService.GetRecipes();
+            ViewData["RecipeList"] = recipes;
+            ViewData["Recipes"] = new SelectList(recipes, "Id", "Name");
+            return PartialView(new MealPlan
+            {
+                MealGroupId = mealGroupId
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMealPartial(MealGroupRecipeRelation relation)
+        public async Task<IActionResult> AddMealPartial(MealPlan plan)
         {
-            await _mealGroupService.AddRelation(relation);
-            return RedirectToAction("Details", new { id = relation.MealGroupId });
+            if (plan.Id > 0)
+                await _mealGroupService.UpdatePlan(plan);
+            else
+                await _mealGroupService.AddPlan(plan);
+            return RedirectToAction("Details", new { id = plan.MealGroupId });
         }
 
         public async Task<IActionResult> RemoveMeal(int id)
         {
-            var mealGroupId = await _mealGroupService.GetMealGroupIdFromRelation(id);
-            await _mealGroupService.RemoveRelation(id);
+            var mealGroupId = await _mealGroupService.GetMealGroupIdFromPlan(id);
+            await _mealGroupService.RemovePlan(id);
             return RedirectToAction("Details", new { id = mealGroupId });
         }
     }
