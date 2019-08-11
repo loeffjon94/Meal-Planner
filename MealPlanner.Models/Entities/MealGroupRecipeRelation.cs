@@ -2,6 +2,7 @@
 {
     public class MealGroupRecipeRelation
     {
+        public int Id { get; set; }
         public int RecipeId { get; set; }
         public int MealGroupId { get; set; }
 

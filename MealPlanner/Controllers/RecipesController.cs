@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using MealPlanner.Data.Contexts;
@@ -18,9 +17,12 @@ namespace MealPlanner.Controllers
     {
         private RecipeService _recipeService;
         private MealsService _mealsService;
-        public RecipesController(MealPlannerContext context, IConfiguration configuration,
-            RecipeService recipeService, MealsService mealsService) : base(context, configuration)
+        private MealPlannerContext _context;
+
+        public RecipesController(MealPlannerContext context,
+            RecipeService recipeService, MealsService mealsService)
         {
+            _context = context;
             _recipeService = recipeService;
             _mealsService = mealsService;
         }

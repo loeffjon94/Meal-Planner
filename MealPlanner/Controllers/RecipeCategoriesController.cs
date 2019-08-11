@@ -4,14 +4,16 @@ using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace MealPlanner.Controllers
 {
     public class RecipeCategoriesController : BaseController
     {
-        public RecipeCategoriesController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        private MealPlannerContext _context;
+
+        public RecipeCategoriesController(MealPlannerContext context)
         {
+            _context = context;
         }
 
         // GET: RecipeCategories

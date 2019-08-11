@@ -6,18 +6,18 @@ using MealPlanner.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace MealPlanner.Controllers
 {
     public class IngredientsController : BaseController
     {
         private IngredientService _ingredientService;
+        private MealPlannerContext _context;
 
-        public IngredientsController(MealPlannerContext context, IConfiguration configuration,
-            IngredientService ingredientService) : base(context, configuration)
+        public IngredientsController(IngredientService ingredientService, MealPlannerContext context)
         {
             _ingredientService = ingredientService;
+            _context = context;
         }
 
         // GET: Ingredients

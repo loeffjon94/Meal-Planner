@@ -5,14 +5,16 @@ using MealPlanner.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace MealPlanner.Controllers
 {
     public class RecipeDetailsController : BaseController
     {
-        public RecipeDetailsController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        private MealPlannerContext _context;
+
+        public RecipeDetailsController(MealPlannerContext context)
         {
+            _context = context;
         }
 
         // GET: RecipeDetails

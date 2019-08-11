@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MealPlanner.Models;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +16,12 @@ namespace MealPlanner.Controllers
     {
         private PlanningService _planningService;
         private MealsService _mealsService;
+        private MealPlannerContext _context;
 
-        public HomeController(MealPlannerContext context, IConfiguration configuration,
-            PlanningService planningService, MealsService mealsService) : base(context, configuration)
+        public HomeController(MealPlannerContext context, 
+            PlanningService planningService, MealsService mealsService)
         {
+            _context = context;
             _planningService = planningService;
             _mealsService = mealsService;
         }
