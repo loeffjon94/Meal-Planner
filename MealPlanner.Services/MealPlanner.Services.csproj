@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.5" />
-    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.37.0.1369" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.40.3.1369" />
   </ItemGroup>
 
   <ItemGroup>
