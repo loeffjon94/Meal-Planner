@@ -48,6 +48,7 @@ namespace MealPlanner
             services.AddScoped<PlanningService>();
             services.AddScoped<RecipeService>();
             services.AddScoped<ShoppingService>();
+            services.AddScoped<MealGroupService>();
 
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 

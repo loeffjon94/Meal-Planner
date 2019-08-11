@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 
@@ -10,8 +9,11 @@ namespace MealPlanner.Controllers
 {
     public class UnitsController : BaseController
     {
-        public UnitsController(MealPlannerContext context, IConfiguration configuration) : base(context, configuration)
+        private MealPlannerContext _context;
+
+        public UnitsController(MealPlannerContext context)
         {
+            _context = context;
         }
 
         // GET: Units

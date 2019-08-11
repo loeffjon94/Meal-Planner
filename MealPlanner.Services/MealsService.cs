@@ -40,6 +40,7 @@ namespace MealPlanner.Services
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
                 return await context.Recipes
+                    .Where(x => !x.RecipeCategory.ExcludeFromFeatured)
                     .Include(x => x.Image)
                     .AsNoTracking()
                     .OrderBy(x => x.LastViewed)
@@ -98,6 +99,28 @@ namespace MealPlanner.Services
             }
         }
 
+        public async Task AddMealGroup(int id)
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                var recipes = await context.MealGroupRecipeRelations
+                    .AsNoTracking()
+                    .Where(x => x.MealGroupId == id)
+                    .Select(x => x.Recipe)
+                    .ToListAsync();
+
+                List<Task> tasks = new List<Task>();
+                foreach (var recipe in recipes)
+                {
+                    tasks.Add(AddMealPlan(new MealPlan
+                    {
+                        RecipeId = recipe.Id
+                    }));
+                }
+                await Task.WhenAll(tasks);
+            }
+        }
+
         public async Task UpdateMealPlan(MealPlan plan)
         {
             using (var conn = new SqlConnection(_confg.GetConnectionString("MealPlannerContext")))
@@ -131,7 +154,7 @@ namespace MealPlanner.Services
                 var drillIns = await context.Recipes
                     .AsNoTracking()
                     .Where(x => x.RecipeDetails.Count() > 0 &&
-                                x.RecipeDetails.Where(y => y.IngredientId == ingredientId && 
+                                x.RecipeDetails.Where(y => y.IngredientId == ingredientId &&
                                                            y.UnitId == unitId).Count() > 0 &&
                                 (x.MealPlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0 ||
                                 x.SidePlans.Where(y => !y.ExcludeFromShoppingList).Count() > 0))

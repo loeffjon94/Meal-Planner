@@ -1,0 +1,28 @@
+﻿@model MealPlanner.Models.Entities.MealGroupRecipeRelation
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addMealModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Add Recipe</h4>
+            </div>
+            <form asp-action="AddMealPartial">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="MealGroupId" />
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label asp-for="RecipeId" class="control-label"></label>
+                        <select asp-for="RecipeId" class="form-control" asp-items="ViewBag.Recipes">
+                            <option value="" selected="selected">Select a Recipe</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add <i class="fas fa-plus"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
