@@ -4,6 +4,7 @@ using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +19,17 @@ namespace MealPlanner.Services
         {
             _configuration = configuration;
             _dbOptions = dbOptions;
+        }
+
+        public async Task<List<Recipe>> GetRecipes()
+        {
+            using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
+            {
+                return await context.Recipes
+                    .AsNoTracking()
+                    .OrderBy(x => x.Name)
+                    .ToListAsync();
+            }
         }
 
         public async Task<string> GetRecipeName(int id)

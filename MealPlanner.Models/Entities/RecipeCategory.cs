@@ -13,6 +13,7 @@ namespace MealPlanner.Models.Entities
         public int Id { get; set; }
         [StringLength(50)]
         public string Name { get; set; }
+        public bool ExcludeFromFeatured { get; set; }
         public ICollection<Recipe> Recipes { get; set; }
     }
 }

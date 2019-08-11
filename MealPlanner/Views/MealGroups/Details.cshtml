@@ -1,0 +1,39 @@
+﻿@model MealPlanner.Models.Entities.MealGroup
+
+@{
+    ViewData["Title"] = "Meal Group";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@Model.Name</h2>
+        <h4>Meal Group</h4>
+    </div>
+    <div class="col-md-4">
+        <button type="button" class="btn btn-primary pull-right" onclick="showAddMealModal(@Model.Id)">Add Meal <i class="fas fa-plus"></i></button>
+    </div>
+</div>
+<hr />
+
+<ul>
+    @foreach (var relation in Model.MealGroupRecipeRelations)
+    {
+        <li>@relation.Recipe.Name <a asp-action="RemoveMeal" asp-controller="MealGroups" asp-route-id="@relation.Id" class="text-danger"><i class="fas fa-times"></i></a></li>
+    }
+</ul>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+    <script>
+        function showAddMealModal(id) {
+            $('#loading').show();
+            $('#modalDiv').load(`/MealGroups/AddMealPartial?mealGroupId=${id}`, function () {
+                $('#loading').hide();
+                $('#addMealModal').modal('show');
+            });
+        }
+    </script>
+}

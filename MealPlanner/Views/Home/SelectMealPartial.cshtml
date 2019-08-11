@@ -19,7 +19,6 @@
                         <label asp-for="ExcludeFromShoppingList" class="control-label" style="padding-right: 10px;"></label>
                         <input type="checkbox" asp-for="ExcludeFromShoppingList" />
                     </div>
-                    <hr />
                     @{ int count = 0;}
                     <div id="sidesDiv">
                         @foreach (var side in Model.SideRecipes)
@@ -45,11 +44,20 @@
                                 <label class="control-label" for="SideRecipes[@(count)].ExcludeFromShoppingList" style="padding-right: 10px;">Exclude from Grocery List</label>
                                 <input type="checkbox" data-val="true" id="SideRecipes[@(count)].ExcludeFromShoppingList" name="SideRecipes[@(count)].ExcludeFromShoppingList" value="true" @(side.ExcludeFromShoppingList ? "checked" : "")>
                             </div>
-                            <hr />
                             count++;
                         }
                     </div>
                     <a href="javascript:addSide()"><i class="glyphicon glyphicon-plus"></i> Add Side</a>
+                    <hr />
+                    <h3>Or Select a Meal Group...</h3>
+                    <div class="row">
+                        @foreach (var mealGroup in (ViewBag.MealGroups as List<MealPlanner.Models.Entities.MealGroup>))
+                        {
+                            <div class="col-md-3">
+                                <a asp-action="ApplyMealGroup" asp-controller="Home" asp-route-mealGroupId="@mealGroup.Id" class="cardLink">@mealGroup.Name</a>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-default" onclick="closeSelectMealModal()">Close</button>
@@ -94,7 +102,7 @@
             '<div class="form-group">' +
             '<label class="control-label" for="SideRecipes[' + count + '].ExcludeFromShoppingList" style="padding-right: 10px;">Exclude from Grocery List</label>' +
             '<input type="checkbox" data-val="true" id="SideRecipes[' + count + '].ExcludeFromShoppingList" name="SideRecipes[' + count + '].ExcludeFromShoppingList" value="true">' +
-            '</div><hr /></div>');
+            '</div></div>');
 
         
         $('.sideSelect').each(function (i, obj) {
