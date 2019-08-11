@@ -19,9 +19,21 @@ namespace MealPlanner.Data.Contexts
         public virtual DbSet<MealPlan> MealPlans { get; set; }
         public virtual DbSet<SideRelationship> SideRelationships { get; set; }
         public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
+        public virtual DbSet<MealGroup> MealGroups { get; set; }
+        public virtual DbSet<MealGroupRecipeRelation> MealGroupRecipeRelations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<MealGroupRecipeRelation>()
+                .HasOne(p => p.Recipe)
+                .WithMany(p => p.MealGroupRecipeRelations)
+                .HasForeignKey(p => p.RecipeId);
+
+            modelBuilder.Entity<MealGroupRecipeRelation>()
+                .HasOne(p => p.MealGroup)
+                .WithMany(p => p.MealGroupRecipeRelations)
+                .HasForeignKey(p => p.MealGroupId);
+
             modelBuilder.Entity<SideRelationship>()
                 .HasKey(s => new { s.RecipeId, s.MealPlanId });
 
