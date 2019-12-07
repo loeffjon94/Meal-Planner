@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.40.3.1369" />
+    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.42.0.1369" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
   </ItemGroup>
 
