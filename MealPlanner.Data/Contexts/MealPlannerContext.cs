@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MealPlanner.Models.Entities;
+﻿using MealPlanner.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MealPlanner.Data.Contexts
 {

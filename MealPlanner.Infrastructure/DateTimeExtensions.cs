@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace MealPlanner.Infrastructure.Extensions
+namespace MealPlanner.Infrastructure
 {
     public static class DateTimeExtensions
     {

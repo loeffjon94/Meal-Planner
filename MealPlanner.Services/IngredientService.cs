@@ -59,7 +59,7 @@ namespace MealPlanner.Services
             {
                 using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
                 {
-                    var ingredientTask = context.Ingredients.FindAsync(ingredientId);
+                    var ingredientTask = context.Ingredients.SingleOrDefaultAsync(x => x.Id == ingredientId);
                     var previousOrderTask = GetIngredientOrder(previousIngredientId);
                     var nextOrderTask = GetIngredientOrder(nextIngredientId);
                     await Task.WhenAll(ingredientTask, previousOrderTask, nextOrderTask);

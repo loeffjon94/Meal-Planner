@@ -1,17 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.40.3.1369" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MealPlanner.Data\MealPlanner.Data.csproj" />
     <ProjectReference Include="..\MealPlanner.Infrastructure\MealPlanner.Infrastructure.csproj" />
+    <ProjectReference Include="..\MealPlanner.Models\MealPlanner.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,8 +2,10 @@
 using MealPlanner.Models.Entities;
 using MealPlanner.Models.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MealPlanner.Services
@@ -204,7 +206,7 @@ namespace MealPlanner.Services
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
             {
                 var itemsToUpdate = await context.ShoppingListItems
-                    .Where(x => x.Order >= startOrder && 
+                    .Where(x => x.Order >= startOrder &&
                                 x.Id != excludeId)
                     .ToListAsync();
 

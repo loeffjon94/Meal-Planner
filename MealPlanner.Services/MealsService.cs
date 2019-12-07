@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using MealPlanner.Data.Contexts;
-using MealPlanner.Infrastructure.Extensions;
+using MealPlanner.Infrastructure;
 using MealPlanner.Models.Entities;
 using MealPlanner.Models.Models;
 using Microsoft.EntityFrameworkCore;

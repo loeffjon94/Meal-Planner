@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.EntityFrameworkCore;
 
 namespace MealPlanner
 {
@@ -26,6 +25,7 @@ namespace MealPlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
@@ -49,8 +49,6 @@ namespace MealPlanner
             services.AddScoped<RecipeService>();
             services.AddScoped<ShoppingService>();
             services.AddScoped<MealGroupService>();
-
-            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
 
             services.AddAuthentication(auth =>
             {
@@ -76,7 +74,6 @@ namespace MealPlanner
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseDeveloperExceptionPage();
-            app.UseBrowserLink();
 
             //app.UseDeveloperExceptionPage();
             //app.UseBrowserLink();
@@ -85,18 +82,14 @@ namespace MealPlanner
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
-
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            var options = new RewriteOptions()
-                .AddRedirectToHttps();
-
-            app.UseRewriter(options);
         }
     }
 }
