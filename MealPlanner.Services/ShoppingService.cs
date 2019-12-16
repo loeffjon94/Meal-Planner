@@ -137,7 +137,14 @@ namespace MealPlanner.Services
         private async Task<int> GetMaxItemOrder()
         {
             using (MealPlannerContext context = new MealPlannerContext(_dbOptions))
-                return await context.ShoppingListItems.Select(x => x.Order).DefaultIfEmpty(0).MaxAsync();
+            {
+                var orders = await context.ShoppingListItems.Select(x => x.Order).ToListAsync();
+                if (!orders.Any())
+                    return 0;
+
+                return orders.Max();
+            }
+                
         }
 
         public async Task CreateItem(ShoppingListItem item)
