@@ -1,0 +1,17 @@
+{
+  "name": "Meal Planner",
+  "short_name": "Meal",
+  "description": "Application to help with meal planning",
+  "icons": [
+    {
+      "src": "/images/market192x192.png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/market512x512.png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "fullscreen",
+  "start_url": "/"
+}
