@@ -74,7 +74,7 @@ namespace MealPlanner.Services
             listRequest.Start = 1;
 
             var search = listRequest.Execute();
-            return search.Items.First().Link;
+            return search.Items.Where(x => x.Link.StartsWith("https")).FirstOrDefault().Link;
         }
 
         public async Task<int?> GetIngredientId(int recipeDetailId)
