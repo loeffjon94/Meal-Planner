@@ -26,7 +26,6 @@ namespace MealPlanner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddProgressiveWebApp();
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
@@ -72,6 +71,7 @@ namespace MealPlanner
                             }
                         };
                     });
+            services.AddProgressiveWebApp();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

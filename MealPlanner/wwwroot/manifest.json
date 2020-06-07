@@ -4,11 +4,11 @@
   "description": "Application to help with meal planning",
   "icons": [
     {
-      "src": "/image/market192x192.png",
+      "src": "/images/market192x192.png",
       "sizes": "192x192"
     },
     {
-      "src": "/image/market512x512.png",
+      "src": "/images/market512x512.png",
       "sizes": "512x512"
     }
   ],
