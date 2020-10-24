@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MealPlanner.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using MealPlanner.Services;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Models;
