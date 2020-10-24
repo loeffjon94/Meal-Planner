@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Stores]
+(
+	[Id] INT NOT NULL PRIMARY KEY, 
+    [Name] NVARCHAR(100) NULL, 
+    [City] NVARCHAR(100) NULL
+)
