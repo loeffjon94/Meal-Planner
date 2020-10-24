@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
+using MealPlanner.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,27 +11,24 @@ namespace MealPlanner.Controllers
 {
     public class RecipeCategoriesController : BaseController
     {
-        private MealPlannerContext _context;
+        private readonly RecipeCategoryService _recipeCategoryService;
 
-        public RecipeCategoriesController(MealPlannerContext context)
+        public RecipeCategoriesController(RecipeCategoryService recipeCategoryService)
         {
-            _context = context;
+            _recipeCategoryService = recipeCategoryService;
         }
 
-        // GET: RecipeCategories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.RecipeCategories.Include(x => x.Recipes).OrderBy(x => x.Name).ToListAsync());
+            return View(await _recipeCategoryService.GetRecipeCategories());
         }
 
-        // GET: RecipeCategories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var recipeCategory = await _context.RecipeCategories
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var recipeCategory = await _recipeCategoryService.GetRecipeCategory(id.Value);
 
             if (recipeCategory == null)
                 return NotFound();
@@ -37,35 +36,29 @@ namespace MealPlanner.Controllers
             return View(recipeCategory);
         }
 
-        // GET: RecipeCategories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: RecipeCategories/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] RecipeCategory recipeCategory)
+        public async Task<IActionResult> Create(RecipeCategory recipeCategory)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(recipeCategory);
-                await _context.SaveChangesAsync();
+                await _recipeCategoryService.Create(recipeCategory);
                 return RedirectToAction(nameof(Index));
             }
             return View(recipeCategory);
         }
 
-        // GET: RecipeCategories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var recipeCategory = await _context.RecipeCategories.SingleOrDefaultAsync(m => m.Id == id);
+            var recipeCategory = await _recipeCategoryService.GetRecipeCategory(id.Value);
 
             if (recipeCategory == null)
                 return NotFound();
@@ -73,26 +66,22 @@ namespace MealPlanner.Controllers
             return View(recipeCategory);
         }
 
-        // POST: RecipeCategories/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] RecipeCategory recipeCategory)
+        public async Task<IActionResult> Edit(RecipeCategory recipeCategory)
         {
-            if (id != recipeCategory.Id)
-                return NotFound();
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(recipeCategory);
-                    await _context.SaveChangesAsync();
+                    if (!await _recipeCategoryService.RecipeCategoryExists(recipeCategory.Id))
+                        return NotFound();
+
+                    await _recipeCategoryService.Update(recipeCategory);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RecipeCategoryExists(recipeCategory.Id))
+                    if (!await _recipeCategoryService.RecipeCategoryExists(recipeCategory.Id))
                         return NotFound();
                     else
                         throw;
@@ -108,8 +97,7 @@ namespace MealPlanner.Controllers
             if (id == null)
                 return NotFound();
 
-            var recipeCategory = await _context.RecipeCategories
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var recipeCategory = await _recipeCategoryService.GetRecipeCategory(id.Value);
 
             if (recipeCategory == null)
                 return NotFound();
@@ -122,15 +110,11 @@ namespace MealPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipeCategory = await _context.RecipeCategories.SingleOrDefaultAsync(m => m.Id == id);
-            _context.RecipeCategories.Remove(recipeCategory);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            if (!await _recipeCategoryService.RecipeCategoryExists(id))
+                return NotFound();
 
-        private bool RecipeCategoryExists(int id)
-        {
-            return _context.RecipeCategories.Any(e => e.Id == id);
+            await _recipeCategoryService.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

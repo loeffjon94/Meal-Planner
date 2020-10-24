@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using MealPlanner.Data.Contexts;
+﻿using System.Threading.Tasks;
 using MealPlanner.Models.Entities;
+using MealPlanner.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,30 +9,29 @@ namespace MealPlanner.Controllers
 {
     public class RecipeDetailsController : BaseController
     {
-        private MealPlannerContext _context;
+        private readonly RecipeDetailsService _recipeDetailsService;
+        private readonly IngredientService _ingredientService;
+        private readonly UnitsService _unitsService;
 
-        public RecipeDetailsController(MealPlannerContext context)
+        public RecipeDetailsController(RecipeDetailsService recipeDetailsService, IngredientService ingredientService,
+            UnitsService unitsService)
         {
-            _context = context;
+            _recipeDetailsService = recipeDetailsService;
+            _ingredientService = ingredientService;
+            _unitsService = unitsService;
         }
 
-        // GET: RecipeDetails
         public async Task<IActionResult> Index(int id)
         {
-            return View(await _context.RecipeDetails.Where(x => x.RecipeId == id).Include(r => r.Ingredient).Include(r => r.Recipe).Include(r => r.Unit).ToListAsync());
+            return View(await _recipeDetailsService.GetRecipeDetails(id));
         }
 
-        // GET: RecipeDetails/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var recipeDetail = await _context.RecipeDetails
-                .Include(r => r.Ingredient)
-                .Include(r => r.Recipe)
-                .Include(r => r.Unit)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var recipeDetail = await _recipeDetailsService.GetRecipeDetail(id.Value);
 
             if (recipeDetail == null)
                 return NotFound();
@@ -41,11 +39,9 @@ namespace MealPlanner.Controllers
             return View(recipeDetail);
         }
 
-        // GET: RecipeDetails/Create
-        public IActionResult Create(int recipeId)
+        public async Task<IActionResult> Create(int recipeId)
         {
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name");
-            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name");
+            await FillViewData();
             RecipeDetail detail = new RecipeDetail()
             {
                 RecipeId = recipeId
@@ -53,82 +49,67 @@ namespace MealPlanner.Controllers
             return View(detail);
         }
 
-        // POST: RecipeDetails/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RecipeDetail recipeDetail)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(recipeDetail);
-                await _context.SaveChangesAsync();
+                await _recipeDetailsService.Create(recipeDetail);
                 return RedirectToAction("Details", "Recipes", new { id = recipeDetail.RecipeId });
             }
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
+
+            await FillViewData();
             return View(recipeDetail);
         }
 
-        // GET: RecipeDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var recipeDetail = await _context.RecipeDetails.SingleOrDefaultAsync(m => m.Id == id);
+            var recipeDetail = await _recipeDetailsService.GetRecipeDetail(id.Value);
 
             if (recipeDetail == null)
                 return NotFound();
 
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
+            await FillViewData();
             return View(recipeDetail);
         }
 
-        // POST: RecipeDetails/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, RecipeDetail recipeDetail)
+        public async Task<IActionResult> Edit(RecipeDetail recipeDetail)
         {
-            if (id != recipeDetail.Id)
-                return NotFound();
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(recipeDetail);
-                    await _context.SaveChangesAsync();
+                    if (!await _recipeDetailsService.RecipeDetailExists(recipeDetail.Id))
+                        return NotFound();
+
+                    await _recipeDetailsService.Update(recipeDetail);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RecipeDetailExists(recipeDetail.Id))
+                    if (!await _recipeDetailsService.RecipeDetailExists(recipeDetail.Id))
                         return NotFound();
                     else
                         throw;
                 }
                 return RedirectToAction("Details", "Recipes", new { id = recipeDetail.RecipeId });
             }
-            ViewData["Ingredients"] = new SelectList(_context.Ingredients.OrderBy(x => x.Name), "Id", "Name", recipeDetail.IngredientId);
-            ViewData["Units"] = new SelectList(_context.Units.OrderBy(x => x.Name), "Id", "Name", recipeDetail.UnitId);
+
+            await FillViewData();
             return View(recipeDetail);
         }
 
-        // GET: RecipeDetails/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var recipeDetail = await _context.RecipeDetails
-                .Include(r => r.Ingredient)
-                .Include(r => r.Recipe)
-                .Include(r => r.Unit)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var recipeDetail = await _recipeDetailsService.GetRecipeDetail(id.Value);
 
             if (recipeDetail == null)
                 return NotFound();
@@ -136,21 +117,22 @@ namespace MealPlanner.Controllers
             return View(recipeDetail);
         }
 
-        // POST: RecipeDetails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipeDetail = await _context.RecipeDetails.SingleOrDefaultAsync(m => m.Id == id);
-            var recipeId = recipeDetail.RecipeId;
-            _context.RecipeDetails.Remove(recipeDetail);
-            await _context.SaveChangesAsync();
+            var recipeId = await _recipeDetailsService.Delete(id);
             return RedirectToAction("Details", "Recipes", new { id = recipeId });
         }
 
-        private bool RecipeDetailExists(int id)
+        private async Task FillViewData()
         {
-            return _context.RecipeDetails.Any(e => e.Id == id);
+            var ingredientsTask = _ingredientService.GetIngredientsForSelect();
+            var unitsTask = _unitsService.GetUnitsForSelect();
+            await Task.WhenAll(ingredientsTask, unitsTask);
+
+            ViewData["Ingredients"] = new SelectList(ingredientsTask.Result, "Id", "Name");
+            ViewData["Units"] = new SelectList(unitsTask.Result, "Id", "Name");
         }
     }
 }

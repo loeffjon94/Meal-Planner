@@ -1,35 +1,31 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
+using MealPlanner.Services;
 
 namespace MealPlanner.Controllers
 {
     public class UnitsController : BaseController
     {
-        private MealPlannerContext _context;
+        private readonly UnitsService _unitsService;
 
-        public UnitsController(MealPlannerContext context)
+        public UnitsController(UnitsService unitsService)
         {
-            _context = context;
+            _unitsService = unitsService;
         }
 
-        // GET: Units
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Units.Include(x => x.RecipeDetails).OrderBy(x => x.Name).ToListAsync());
+            return View(await _unitsService.GetUnits());
         }
 
-        // GET: Units/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var unit = await _context.Units
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var unit = await _unitsService.GetUnit(id.Value);
 
             if (unit == null)
                 return NotFound();
@@ -37,35 +33,29 @@ namespace MealPlanner.Controllers
             return View(unit);
         }
 
-        // GET: Units/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Units/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Unit unit)
+        public async Task<IActionResult> Create(Unit unit)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(unit);
-                await _context.SaveChangesAsync();
+                await _unitsService.Create(unit);
                 return RedirectToAction(nameof(Index));
             }
             return View(unit);
         }
 
-        // GET: Units/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var unit = await _context.Units.SingleOrDefaultAsync(m => m.Id == id);
+            var unit = await _unitsService.GetUnit(id.Value);
 
             if (unit == null)
                 return NotFound();
@@ -73,26 +63,22 @@ namespace MealPlanner.Controllers
             return View(unit);
         }
 
-        // POST: Units/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Unit unit)
+        public async Task<IActionResult> Edit(Unit unit)
         {
-            if (id != unit.Id)
-                return NotFound();
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(unit);
-                    await _context.SaveChangesAsync();
+                    if (!await _unitsService.UnitExists(unit.Id))
+                        return NotFound();
+
+                    await _unitsService.Update(unit);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UnitExists(unit.Id))
+                    if (!await _unitsService.UnitExists(unit.Id))
                         return NotFound();
                     else
                         throw;
@@ -102,14 +88,12 @@ namespace MealPlanner.Controllers
             return View(unit);
         }
 
-        // GET: Units/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var unit = await _context.Units
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var unit = await _unitsService.GetUnit(id.Value);
 
             if (unit == null)
                 return NotFound();
@@ -117,20 +101,12 @@ namespace MealPlanner.Controllers
             return View(unit);
         }
 
-        // POST: Units/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var unit = await _context.Units.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Units.Remove(unit);
-            await _context.SaveChangesAsync();
+            await _unitsService.Delete(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool UnitExists(int id)
-        {
-            return _context.Units.Any(e => e.Id == id);
         }
     }
 }

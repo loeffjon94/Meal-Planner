@@ -4,7 +4,6 @@ using MealPlanner.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MealPlanner.Services;
-using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Models;
 using MealPlanner.Models.Entities;
 
@@ -12,16 +11,14 @@ namespace MealPlanner.Controllers
 {
     public class HomeController : BaseController
     {
-        private PlanningService _planningService;
-        private MealsService _mealsService;
-        private MealPlannerContext _context;
-        private MealGroupService _mealGroupService;
-        private RecipeService _recipeService;
+        private readonly PlanningService _planningService;
+        private readonly MealsService _mealsService;
+        private readonly MealGroupService _mealGroupService;
+        private readonly RecipeService _recipeService;
 
-        public HomeController(MealPlannerContext context, MealGroupService mealGroupService,
-            PlanningService planningService, MealsService mealsService, RecipeService recipeService)
+        public HomeController(MealGroupService mealGroupService, PlanningService planningService, 
+            MealsService mealsService, RecipeService recipeService)
         {
-            _context = context;
             _planningService = planningService;
             _mealsService = mealsService;
             _mealGroupService = mealGroupService;

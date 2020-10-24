@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using MealPlanner.Data.Contexts;
+﻿using System.Threading.Tasks;
 using MealPlanner.Models.Entities;
 using MealPlanner.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +9,20 @@ namespace MealPlanner.Controllers
 {
     public class IngredientsController : BaseController
     {
-        private IngredientService _ingredientService;
-        private MealPlannerContext _context;
+        private readonly IngredientService _ingredientService;
+        private readonly StoresService _storesService;
 
-        public IngredientsController(IngredientService ingredientService, MealPlannerContext context)
+        public IngredientsController(IngredientService ingredientService, StoresService storesService)
         {
             _ingredientService = ingredientService;
-            _context = context;
+            _storesService = storesService;
         }
 
-        // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-            var mealPlannerContext = _context.Ingredients.Include(i => i.Store).Include(i => i.RecipeDetails).OrderBy(x => x.Order);
-            return View(await mealPlannerContext.ToListAsync());
+            return View(await _ingredientService.GetIngredients());
         }
 
-        // GET: Ingredients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,16 +36,12 @@ namespace MealPlanner.Controllers
             return View(ingredient);
         }
 
-        // GET: Ingredients/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name");
+            await FillViewData();
             return View();
         }
 
-        // POST: Ingredients/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Ingredient ingredient)
@@ -60,30 +51,25 @@ namespace MealPlanner.Controllers
                 await _ingredientService.CreateIngredient(ingredient);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
+
+            await FillViewData();
             return View(ingredient);
         }
 
-        // GET: Ingredients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var ingredient = await _ingredientService.GetIngredient(id);
 
             if (ingredient == null)
                 return NotFound();
 
-            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
+            await FillViewData();
             return View(ingredient);
         }
 
-        // POST: Ingredients/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Ingredient ingredient)
@@ -99,18 +85,18 @@ namespace MealPlanner.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IngredientExists(ingredient.Id))
+                    if (!await _ingredientService.IngredientExists(id))
                         return NotFound();
                     else
                         throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Stores"] = new SelectList(_context.Stores.OrderBy(x => x.Name), "Id", "Name", ingredient.StoreId);
+
+            await FillViewData();
             return View(ingredient);
         }
 
-        // GET: Ingredients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,7 +110,6 @@ namespace MealPlanner.Controllers
             return View(ingredient);
         }
 
-        // POST: Ingredients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -144,9 +129,10 @@ namespace MealPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool IngredientExists(int id)
+        private async Task FillViewData()
         {
-            return _context.Ingredients.Any(e => e.Id == id);
+            var stores = await _storesService.GetStoresForSelect();
+            ViewData["Stores"] = new SelectList(stores, "Id", "Name");
         }
     }
 }

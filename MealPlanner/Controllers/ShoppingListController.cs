@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using MealPlanner.Data.Contexts;
 using MealPlanner.Services;
 using MealPlanner.Models.Entities;
 
@@ -9,12 +8,9 @@ namespace MealPlanner.Controllers
     public class ShoppingListController : BaseController
     {
         private readonly ShoppingService _shoppingService;
-        private MealPlannerContext _context;
 
-        public ShoppingListController(MealPlannerContext context,
-            ShoppingService shoppingService)
+        public ShoppingListController(ShoppingService shoppingService)
         {
-            _context = context;
             _shoppingService = shoppingService;
         }
 

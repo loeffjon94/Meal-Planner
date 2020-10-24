@@ -49,6 +49,10 @@ namespace MealPlanner
             services.AddScoped<RecipeService>();
             services.AddScoped<ShoppingService>();
             services.AddScoped<MealGroupService>();
+            services.AddScoped<RecipeCategoryService>();
+            services.AddScoped<RecipeDetailsService>();
+            services.AddScoped<StoresService>();
+            services.AddScoped<UnitsService>();
 
             services.AddAuthentication(auth =>
             {
