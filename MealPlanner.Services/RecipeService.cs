@@ -27,7 +27,7 @@ namespace MealPlanner.Services
 
         public async Task<List<Recipe>> GetRecipes()
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                     .AsNoTracking()
                     .OrderBy(x => x.Name)
@@ -36,7 +36,7 @@ namespace MealPlanner.Services
 
         public async Task<List<Recipe>> GetRecipesWithImages()
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                 .AsNoTracking()
                 .Include(r => r.Image)
@@ -47,7 +47,7 @@ namespace MealPlanner.Services
 
         public async Task<string> GetRecipeName(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                         .AsNoTracking()
                         .Where(x => x.Id == id)
@@ -57,7 +57,7 @@ namespace MealPlanner.Services
 
         public async Task<Recipe> GetRecipe(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                     .Where(x => x.Id == id)
                     .SingleOrDefaultAsync();
@@ -65,7 +65,7 @@ namespace MealPlanner.Services
 
         public async Task<Recipe> GetRecipeWithImage(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                 .Include(r => r.Image)
                 .Include(r => r.RecipeCategory)
@@ -74,7 +74,7 @@ namespace MealPlanner.Services
 
         public async Task<Image> GetRecipeDisplayImage(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                     .Where(x => x.Id == id)
                     .Select(x => x.Image)
@@ -83,7 +83,7 @@ namespace MealPlanner.Services
 
         public async Task UpdateViewedDate(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             var recipe = await context.Recipes.FindAsync(id);
             recipe.LastViewed = DateTime.Now;
             context.Recipes.Update(recipe);
@@ -100,7 +100,7 @@ namespace MealPlanner.Services
             };
             image.Recipes.Add(recipe);
 
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             if (RecipeImage != null)
             {
                 using var stream = new MemoryStream();
@@ -120,7 +120,7 @@ namespace MealPlanner.Services
 
         public async Task Update(Recipe recipe, IFormFile RecipeImage)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             if (RecipeImage != null)
             {
                 using var stream = new MemoryStream();
@@ -139,7 +139,7 @@ namespace MealPlanner.Services
 
         public async Task Delete(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             var recipe = await context.Recipes
                 .Include(m => m.Image)
                 .Include(m => m.RecipeImage)
@@ -156,7 +156,7 @@ namespace MealPlanner.Services
 
         public async Task UpdateImage(EditImageModel model)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             var image = await GetRecipeDisplayImage(model.RecipeId);
             image.DataUrl = GetImage(model.ImageSearch);
             context.Update(image);
@@ -165,7 +165,7 @@ namespace MealPlanner.Services
 
         public async Task<Recipe> GetRecipeWithRecipeImage(int recipeId)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                 .Include(r => r.RecipeImage)
                 .SingleOrDefaultAsync(r => r.Id == recipeId);
@@ -191,7 +191,7 @@ namespace MealPlanner.Services
 
         public async Task<int?> GetIngredientId(int recipeDetailId)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context
                     .RecipeDetails
                     .AsNoTracking()
@@ -202,7 +202,7 @@ namespace MealPlanner.Services
 
         public async Task<int?> GetUnitId(int recipeDetailId)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context
                     .RecipeDetails
                     .AsNoTracking()
@@ -213,7 +213,7 @@ namespace MealPlanner.Services
 
         public async Task<bool> RecipeExists(int id)
         {
-            MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
             return await context.Recipes
                 .AsNoTracking()
                 .AnyAsync(x => x.Id == id);
