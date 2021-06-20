@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $('#Name').on('change', function () {
+    $('#Name').on('keyup', function () {
         var name = $(this).val();
         $.ajax({
             type: "GET",
