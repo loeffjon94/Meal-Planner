@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MealPlanner.Models.Entities
 {
@@ -13,6 +14,14 @@ namespace MealPlanner.Models.Entities
         public decimal? Quantity { get; set; }
         [Display(Name = "Unit")]
         public int? UnitId { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Ingredient")]
+        public string CreateIngredientName { get; set; }
+        [NotMapped]
+        [Display(Name = "Ingredient Store")]
+        public int? CreateIngredientStoreId { get; set; }
+
         public virtual Recipe Recipe { get; set; }
         public virtual Ingredient Ingredient { get; set; }
         public virtual Unit Unit { get; set; }

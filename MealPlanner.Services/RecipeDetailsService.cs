@@ -10,10 +10,12 @@ namespace MealPlanner.Services
     public class RecipeDetailsService
     {
         private readonly DbContextOptions<MealPlannerContext> _dbOptions;
+        private readonly IngredientService _ingredientService;
 
-        public RecipeDetailsService(DbContextOptions<MealPlannerContext> dbOptions)
+        public RecipeDetailsService(DbContextOptions<MealPlannerContext> dbOptions, IngredientService ingredientService)
         {
             _dbOptions = dbOptions;
+            _ingredientService = ingredientService;
         }
 
         public async Task<List<RecipeDetail>> GetRecipeDetails(int recipeId)
@@ -41,7 +43,13 @@ namespace MealPlanner.Services
 
         public async Task Create(RecipeDetail recipeDetail)
         {
-            using MealPlannerContext context = new MealPlannerContext(_dbOptions);
+            if (!string.IsNullOrEmpty(recipeDetail.CreateIngredientName) &&
+                recipeDetail.CreateIngredientStoreId.HasValue)
+            {
+                recipeDetail.IngredientId = await _ingredientService.CreateIngredient(recipeDetail.CreateIngredientName, recipeDetail.CreateIngredientStoreId.Value);
+            }
+
+            using MealPlannerContext context = new(_dbOptions);
             context.RecipeDetails.Add(recipeDetail);
             await context.SaveChangesAsync();
         }

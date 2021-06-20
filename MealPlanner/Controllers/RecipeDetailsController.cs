@@ -12,13 +12,15 @@ namespace MealPlanner.Controllers
         private readonly RecipeDetailsService _recipeDetailsService;
         private readonly IngredientService _ingredientService;
         private readonly UnitsService _unitsService;
+        private readonly StoresService _storesService;
 
         public RecipeDetailsController(RecipeDetailsService recipeDetailsService, IngredientService ingredientService,
-            UnitsService unitsService)
+            UnitsService unitsService, StoresService storesService)
         {
             _recipeDetailsService = recipeDetailsService;
             _ingredientService = ingredientService;
             _unitsService = unitsService;
+            _storesService = storesService;
         }
 
         public async Task<IActionResult> Index(int id)
@@ -129,10 +131,12 @@ namespace MealPlanner.Controllers
         {
             var ingredientsTask = _ingredientService.GetIngredientsForSelect();
             var unitsTask = _unitsService.GetUnitsForSelect();
-            await Task.WhenAll(ingredientsTask, unitsTask);
+            var storesTask = _storesService.GetStoresForSelect();
+            await Task.WhenAll(ingredientsTask, unitsTask, storesTask);
 
             ViewData["Ingredients"] = new SelectList(ingredientsTask.Result, "Id", "Name");
             ViewData["Units"] = new SelectList(unitsTask.Result, "Id", "Name");
+            ViewData["Stores"] = new SelectList(storesTask.Result, "Id", "Name");
         }
     }
 }

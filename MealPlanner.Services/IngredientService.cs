@@ -53,6 +53,22 @@ namespace MealPlanner.Services
             await context.SaveChangesAsync();
         }
 
+        public async Task<int> CreateIngredient(string name, int storeId)
+        {
+            Ingredient ingredient = new()
+            {
+                Name = name,
+                StoreId = storeId,
+                Order = await GetMaxOrder() + 1
+            };
+
+            using MealPlannerContext context = new(_dbOptions);
+            context.Add(ingredient);
+            await context.SaveChangesAsync();
+
+            return ingredient.Id;
+        }
+
         public async Task UpdateIngredient(Ingredient ingredient)
         {
             using MealPlannerContext context = new MealPlannerContext(_dbOptions);
