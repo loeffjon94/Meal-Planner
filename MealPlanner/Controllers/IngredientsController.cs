@@ -129,6 +129,19 @@ namespace MealPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<JsonResult> SearchForSimilar(string name)
+        {
+            try
+            {
+                var existingIngredients = await _ingredientService.SearchForSimilar(name);
+                return Json(new { success = true, existingIngredients });
+            }
+            catch
+            {
+                return Json(new { success = false });
+            }
+        }
+
         private async Task FillViewData()
         {
             var stores = await _storesService.GetStoresForSelect();

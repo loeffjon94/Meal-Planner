@@ -28,7 +28,18 @@
     </div>
 </div>
 
+<div id="ExistingIngredientCheckContainer" style="display:none;">
+    <hr />
+    <h4>Potential Existing Ingredients</h4>
+    <ul id="ExistingIngredientList">
+        
+    </ul>
+</div>
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    <script src="/js/IngredientCreateEdit.js" asp-append-version="true"></script>
+}

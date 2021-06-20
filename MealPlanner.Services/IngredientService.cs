@@ -1,5 +1,6 @@
 ﻿using MealPlanner.Data.Contexts;
 using MealPlanner.Models.Entities;
+using MealPlanner.Services.Tools;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,6 +103,21 @@ namespace MealPlanner.Services
             {
                 return false;
             }
+        }
+
+        public async Task<List<string>> SearchForSimilar(string name)
+        {
+            using MealPlannerContext context = new(_dbOptions);
+            var allIngredients = await context.Ingredients
+                .AsNoTracking()
+                .Select(x => x.Name)
+                .ToListAsync();
+
+            IDictionary<string, int> ratings = new Dictionary<string, int>();
+            foreach (var ingredient in allIngredients)
+                ratings[ingredient] = LevenshteinDistance.Compute(name, ingredient);
+
+            return ratings.Where(x => x.Value <= 3).OrderBy(x => x.Value).Select(x => x.Key).ToList();
         }
 
         private async Task UpdateAffectedSequences(int order, int excludedId, int stopOrder)
